@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace ListPlanner.Models
     {
 
         [ScaffoldColumn(false)]
-        public int ItemID { get; set; }
+        public int ListItemID { get; set; }
 
         [Required]
         [Display(Name = "Name")]
@@ -21,8 +22,8 @@ namespace ListPlanner.Models
         public bool IsDone { get; set; }
 
         [ScaffoldColumn(false)]
-        public int ListID { get; set; }
+        public int ToDoListID { get; set; }
 
-   //     public virtual ToDoList ToDoList { get; set; }
+        public virtual ToDoList ToDoList { get; set; }
     }
 }

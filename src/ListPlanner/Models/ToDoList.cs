@@ -9,7 +9,7 @@ namespace ListPlanner.Models
     public class ToDoList
     {
         [ScaffoldColumn(false)]
-        public int ListID { get; set; }
+        public int ToDoListID { get; set; }
 
         [Required]
         public string Title { get; set; }

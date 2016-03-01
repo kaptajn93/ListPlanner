@@ -1,0 +1,406 @@
+
+@model IEnumerable<ListPlanner.Models.ToDoList>
+@{
+    ViewData["Title"] = "Index";
+}
+<h2>Your List(s)</h2>
+@*<p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <p><h1> Your Lists</h1> </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Parent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Parent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ToDoListID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ToDoListID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ToDoListID">Delete</a>
+                </td>
+            </tr>
+        }
+    </table>*@
+
+@*__________________________________________________________________________________________________________
+
+    Your page*@
+
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th colspan="2"><h3>List</h3></th>
+            <th><h4>Items on list</h4></th>
+            <th><h4>All done?</h4></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: toDoLists">
+
+        <tr data-toggle="modal" data-target="#currentList" id="setSuccess" data-bind="click: $parent.selectList.bind($data), css: cssStatusClass">
+            <td colspan="2"><h4><text data-bind="text: name" /></h4></td>
+            <td><h4><text data-bind="text: itemCount"/></h4></td>
+            <td><h4><text data-bind="text: allDoneText" /></h4></td>
+            <td><button class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeToDoList">&times;</button></td>
+        </tr>
+
+    </tbody>
+
+</table>
+<br />
+<div class="col-lg-offset-9"><h4>You have <span data-bind="text: toDoLists().length"></span> lists</h4></div>
+
+@*--------------------------------button to tricker modal------------------------------------*@
+<button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">
+   New list
+</button>
+@*-------------------------------------modal-------------------------------------------------------*@
+<br />
+
+
+<hr />
+
+<!-- ko if: selectedList() -->
+@*from before
+    <div id="currentList" data-bind="visible:selectedList()">*@
+
+<div class="modal fade" id="currentList" tabindex="-1" role="dialog" data-bind="visible:selectedList()">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title"><text data-bind="text: selectedList().name" /></h2>
+            </div>
+            <div class="modal-body">
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th> Name</th>
+                            <th>Done</th>
+
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: selectedList().items()">
+                        <tr>
+                            <td><h3><text data-bind="text: itemName" /></h3></td>
+                            <td><input type="checkbox" style="zoom:2.0" data-bind="checked: isDone" /></td>
+                            <td>
+                                <button type="button" class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeItemFromSelectedList">&times;</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <br /><br />
+
+            <center><h4>You have done (<span data-bind="text: totalDone()"></span> / <span data-bind="text: selectedList().items().length"></span>)</h4></center>
+
+
+            <
+            <div class="modal-footer">
+                <table>
+                    <tr>
+                        <td><input class="form-control" type="text" data-bind="value: newItemOnSelected().itemName" placeholder="insert item name" /></td>
+                    <td><h1>&nbsp;</h1></td>
+                        <td><button type="button" class="btn btn-primary" data-bind="click: addItemToSelectedList">Add an item</button></td>
+                    </tr></table>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary" data-bind="click: $parent. updateList">Save changes</button>*@
+            </div>
+            <br />
+
+        </div>
+    </div>
+</div>
+<!-- /ko -->
+@*-------------------------------------modal-------------------------------------------------------*@
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" data-bind="with: newToDoList">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">New List</h4>
+            </div>
+            <div class="modal-body">
+
+                <input input class="form-control input-lg" type="text" data-bind="value: $parent.newToDoList().name, valueUpdate:'keyup'" placeholder="List name" />
+                <div class="col-lg-offset-9"><h4>Items on list (<span data-bind="text: items().length"></span>)</h4></div>
+
+                <table class="table">
+                    <tr>
+                        <th> Name</th>
+                        <th>is Done</th>
+                        <th></th>
+                    </tr>
+                    <tbody data-bind="foreach: items">
+                        <tr>
+                            <td><h4><text data-bind="text: itemName" /></h4></td>
+                            <td><input type="checkbox" style="zoom:1.5" data-bind="checked: isDone" /> </td>
+                            <td><button class="close" style="zoom:2.0; color:red" data-bind="click: $parent.removeItem">&times;</button></td>
+                        </tr>
+                    </tbody>
+
+
+
+                </table>
+
+                <br />
+                <table>
+                    <tr>
+                        <td><input class="form-control" type="text" data-bind="value: newItem().itemName" placeholder="insert item name" /></td>
+                        <td><button type="button" class="btn btn-primary btn-sm" data-bind="click: addItem">Add an item</button></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bind="click: $parent.addToDoList">Save changes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+@section scripts {
+    <script type="text/javascript">
+
+        //______________________________________________Script section_____________________________________________
+
+
+
+        var vm = new ViewModel();
+
+        function closeCurrentItems() {
+
+            document.getElementById("currentList").style.display = "none";
+        }
+
+        function ToDoList(selected, name, items) {
+            var self = this;
+
+            /// todo - remove
+            self.selected = ko.observable(selected || false);
+            self.name = ko.observable(name || '');
+            self.items = ko.observableArray(items || []);
+
+            self.newItem = ko.observable(new Item());
+
+            self.addItem = function () {
+
+                var itemToBeAdded = self.newItem();
+
+                if (itemToBeAdded.itemName().length <= '1') {
+                    alert('Name is required to be > 1');
+                    return false;
+                }
+                self.items.push(itemToBeAdded);
+                self.resetItem();
+            }
+
+            self.removeItem = function (item) {
+                self.items.remove(item);
+            }
+
+            self.resetItem = function () {
+                //self.errorMessage('');
+                self.newItem(new Item());
+            }
+
+            self.setSuccess = function (string) {
+
+                if (string == "All Done") {
+                    document.getElementById("setSuccess").style.backgroundColor = "lightGreen";
+                }
+                else {
+                    document.getElementById("setSuccess").style.backgroundColor = "";
+
+                }
+            }
+
+            self.getCount = function () {
+                var items = self.items();
+                var count = 0;
+                var getAllDone = ko.utils.arrayForEach(items, function (item) {
+                    if (item.isDone() === true) {
+                        count++
+                    }
+                });
+                return {
+                    'count': count,
+                    'total': self.items().length
+                };
+            }
+
+            // computed
+            self.allDone = ko.computed(function () {
+
+                var result = self.getCount();
+                return result.count === result.total;
+            });
+
+
+            self.allDoneText = ko.computed(function () {
+                var result = self.getCount();
+
+                if (self.allDone() === true) {
+                    return "All Done"
+                }
+                return ("Missing: " + (result.total - result.count) + " items")
+            });
+
+            self.cssStatusClass = ko.computed(function () {
+
+                //$parent.selectedList() !== null && $parent.selectedList().name === name
+
+                if (!self.allDone()) {
+                    return 'warning';
+                }
+                else {
+                    return 'success';
+
+                }
+            });
+
+            self.itemCount = ko.computed(function () {
+                return self.items().length;
+            });
+            //self.description = ko.computed(function () {
+            //    return self.name() + "," + self.itemCount();
+            //})
+        }
+
+        function Item(itemName, isDone) {
+            var self = this;
+            self.itemName = ko.observable(itemName);
+            self.isDone = ko.observable(/*isDone ||*/ false);
+
+            self.thisItem = ko.computed(function () {
+                return self.itemName() + "," + self.isDone()
+            })
+        }
+
+        function ViewModel(lists) {
+
+            var self = this;
+            self.toDoLists = ko.observableArray(lists || []);
+
+            //selected list
+            self.selectedList = ko.observable(null);
+
+            self.selectList = function (list) {
+                self.selectedList(list);
+            }
+
+            self.removeItemFromSelectedList = function (item) {
+                self.selectedList().removeItem(item);
+            }
+
+            self.newItemOnSelected = ko.observable(new Item());
+
+            self.addItemToSelectedList = function () {
+
+                var itemToBeAdded = self.newItemOnSelected();
+
+                if (itemToBeAdded.itemName().length <= '1') {
+                    alert('Name is required to be > 1');
+                    return false;
+                }
+                self.selectedList().items.push(itemToBeAdded);
+                self.resetSelectedItem = function () {
+                    //self.errorMessage('');
+                    self.newItemOnSelected(new Item());
+                }
+                self.resetSelectedItem();
+            }
+
+            self.totalDone = function () {
+
+                var numDone = 0;
+                for (var i = 0; i < self.selectedList().items().length; i++) {
+
+                    var currentList = self.selectedList().items();
+                    var currentItem = currentList[i];
+                    if (currentItem.isDone() === true) {
+                        numDone++;
+                    }
+                }
+                return numDone;
+            }
+
+            // temp list
+            self.newToDoList = ko.observable(new ToDoList());
+
+            self.addToDoList = function () {
+
+                var listToBeAdded = self.newToDoList();
+
+                if (listToBeAdded.name().length <= '1') {
+                    alert('Name is required to be > 1');
+                    return false;
+                }
+
+                self.toDoLists.push(listToBeAdded);
+                self.resetList();
+            }
+
+            self.removeToDoList = function (toDoList) {
+                self.toDoLists.remove(toDoList);
+            }
+
+            self.resetList = function () {
+                //self.errorMessage('');
+                self.newToDoList(new ToDoList());
+
+            };
+
+            self.showList = ko.computed(function () {
+                return self.selectedList() != null;
+            });
+
+            //self.isListChecked = function (list) {
+            //    var selected = self.selectedList();
+            //    if (selected != null && selected.name === list.name) {
+            //        return true;
+            //    }
+            //    return false;
+            //};
+
+
+        }
+
+        vm.toDoLists([
+            new ToDoList(false, "Sleep Over", [
+                new Item("Fine Wine", false),
+                new Item("Sleeping bag", false)]),
+            new ToDoList(false, "Party at 5th", [
+                new Item("Fine Wine", false),
+                new Item("Jelly shots", false)]),
+        ]);
+
+
+
+        ko.applyBindings(vm);
+
+
+    </script>
+}
