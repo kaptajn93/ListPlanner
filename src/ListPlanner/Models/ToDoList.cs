@@ -16,10 +16,17 @@ namespace ListPlanner.Models
 
         public int Parent { get; set; }
 
+        public ICollection<ListItem> Items { get; set; }
+
+        public Boolean Selected { get; set; }
+
         [ScaffoldColumn(false)]
         public int UserID { get; set; }
 
+        
         // Navigation property
         public virtual User User { get; set; }
+
+     
     }
 }

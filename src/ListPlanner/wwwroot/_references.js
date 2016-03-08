@@ -1,9 +1,10 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="../gulpfile.js" />
 /// <reference path="js/listitems.min.js" />
-/// <reference path="js/site - copy.js" />
 /// <reference path="js/site.js" />
 /// <reference path="js/todolists.js" />
+/// <reference path="js/viewmodels/site.js" />
+/// <reference path="js/viewmodels/todolist.index.min.js" />
 /// <reference path="lib/bootstrap/dist/js/bootstrap.js" />
 /// <reference path="lib/jquery/dist/jquery.js" />
 /// <reference path="lib/jquery-validation/dist/jquery.validate.js" />

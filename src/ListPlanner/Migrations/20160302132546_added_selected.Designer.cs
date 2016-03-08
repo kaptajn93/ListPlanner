@@ -8,9 +8,10 @@ using ListPlanner.Models;
 namespace ListPlanner.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160302132546_added_selected")]
+    partial class added_selected
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -71,7 +72,7 @@ namespace ListPlanner.Migrations
 
                     b.Property<bool>("IsDone");
 
-                    b.Property<string>("ItemName")
+                    b.Property<string>("Name")
                         .IsRequired();
 
                     b.Property<int>("Parent");

@@ -56,7 +56,7 @@
         <tr data-toggle="modal" data-target="#currentList" id="setSuccess" data-bind="click: $parent.selectList.bind($data), css: cssStatusClass">
             <td colspan="2"><h4><text data-bind="text: name" /></h4></td>
             <td><h4><text data-bind="text: itemCount"/></h4></td>
-            <td><h4><text data-bind="text: allDoneText" /></h4></td>
+            <td><h4><text data-bind="text: allDoneText()" /></h4></td>
             <td><button class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeToDoList">&times;</button></td>
         </tr>
 
@@ -70,6 +70,10 @@
 <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal">
    New list
 </button>
+<button type="button" class="btn btn-primary btn-md" data-bind="click:reload">
+    Reload
+</button>
+
 @*-------------------------------------modal-------------------------------------------------------*@
 <br />
 
@@ -111,7 +115,7 @@
             </div>
             <br /><br />
 
-            <center><h4>You have done (<span data-bind="text: totalDone()"></span> / <span data-bind="text: selectedList().items().length"></span>)</h4></center>
+            <center><h4>You have done (<span data-bind="text: totalDone"></span> / <span data-bind="text: selectedList().items().length"></span>)</h4></center>
 
 
             <
@@ -181,226 +185,22 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
+
+@section footer {
+<hr />
+<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
+
+}
+
+@*______________________________________________Script section_____________________________________________*@
+
 @section scripts {
-    <script type="text/javascript">
 
-        //______________________________________________Script section_____________________________________________
+<script src="~/js/listitems.js"></script>
+<script src="~/js/todolists.js"></script>
+<script src="~/js/viewmodels/todolist.index.js"></script>
 
-
-
-        var vm = new ViewModel();
-
-        function closeCurrentItems() {
-
-            document.getElementById("currentList").style.display = "none";
-        }
-
-        function ToDoList(selected, name, items) {
-            var self = this;
-
-            /// todo - remove
-            self.selected = ko.observable(selected || false);
-            self.name = ko.observable(name || '');
-            self.items = ko.observableArray(items || []);
-
-            self.newItem = ko.observable(new Item());
-
-            self.addItem = function () {
-
-                var itemToBeAdded = self.newItem();
-
-                if (itemToBeAdded.itemName().length <= '1') {
-                    alert('Name is required to be > 1');
-                    return false;
-                }
-                self.items.push(itemToBeAdded);
-                self.resetItem();
-            }
-
-            self.removeItem = function (item) {
-                self.items.remove(item);
-            }
-
-            self.resetItem = function () {
-                //self.errorMessage('');
-                self.newItem(new Item());
-            }
-
-            self.setSuccess = function (string) {
-
-                if (string == "All Done") {
-                    document.getElementById("setSuccess").style.backgroundColor = "lightGreen";
-                }
-                else {
-                    document.getElementById("setSuccess").style.backgroundColor = "";
-
-                }
-            }
-
-            self.getCount = function () {
-                var items = self.items();
-                var count = 0;
-                var getAllDone = ko.utils.arrayForEach(items, function (item) {
-                    if (item.isDone() === true) {
-                        count++
-                    }
-                });
-                return {
-                    'count': count,
-                    'total': self.items().length
-                };
-            }
-
-            // computed
-            self.allDone = ko.computed(function () {
-
-                var result = self.getCount();
-                return result.count === result.total;
-            });
-
-
-            self.allDoneText = ko.computed(function () {
-                var result = self.getCount();
-
-                if (self.allDone() === true) {
-                    return "All Done"
-                }
-                return ("Missing: " + (result.total - result.count) + " items")
-            });
-
-            self.cssStatusClass = ko.computed(function () {
-
-                //$parent.selectedList() !== null && $parent.selectedList().name === name
-
-                if (!self.allDone()) {
-                    return 'warning';
-                }
-                else {
-                    return 'success';
-
-                }
-            });
-
-            self.itemCount = ko.computed(function () {
-                return self.items().length;
-            });
-            //self.description = ko.computed(function () {
-            //    return self.name() + "," + self.itemCount();
-            //})
-        }
-
-        function Item(itemName, isDone) {
-            var self = this;
-            self.itemName = ko.observable(itemName);
-            self.isDone = ko.observable(/*isDone ||*/ false);
-
-            self.thisItem = ko.computed(function () {
-                return self.itemName() + "," + self.isDone()
-            })
-        }
-
-        function ViewModel(lists) {
-
-            var self = this;
-            self.toDoLists = ko.observableArray(lists || []);
-
-            //selected list
-            self.selectedList = ko.observable(null);
-
-            self.selectList = function (list) {
-                self.selectedList(list);
-            }
-
-            self.removeItemFromSelectedList = function (item) {
-                self.selectedList().removeItem(item);
-            }
-
-            self.newItemOnSelected = ko.observable(new Item());
-
-            self.addItemToSelectedList = function () {
-
-                var itemToBeAdded = self.newItemOnSelected();
-
-                if (itemToBeAdded.itemName().length <= '1') {
-                    alert('Name is required to be > 1');
-                    return false;
-                }
-                self.selectedList().items.push(itemToBeAdded);
-                self.resetSelectedItem = function () {
-                    //self.errorMessage('');
-                    self.newItemOnSelected(new Item());
-                }
-                self.resetSelectedItem();
-            }
-
-            self.totalDone = function () {
-
-                var numDone = 0;
-                for (var i = 0; i < self.selectedList().items().length; i++) {
-
-                    var currentList = self.selectedList().items();
-                    var currentItem = currentList[i];
-                    if (currentItem.isDone() === true) {
-                        numDone++;
-                    }
-                }
-                return numDone;
-            }
-
-            // temp list
-            self.newToDoList = ko.observable(new ToDoList());
-
-            self.addToDoList = function () {
-
-                var listToBeAdded = self.newToDoList();
-
-                if (listToBeAdded.name().length <= '1') {
-                    alert('Name is required to be > 1');
-                    return false;
-                }
-
-                self.toDoLists.push(listToBeAdded);
-                self.resetList();
-            }
-
-            self.removeToDoList = function (toDoList) {
-                self.toDoLists.remove(toDoList);
-            }
-
-            self.resetList = function () {
-                //self.errorMessage('');
-                self.newToDoList(new ToDoList());
-
-            };
-
-            self.showList = ko.computed(function () {
-                return self.selectedList() != null;
-            });
-
-            //self.isListChecked = function (list) {
-            //    var selected = self.selectedList();
-            //    if (selected != null && selected.name === list.name) {
-            //        return true;
-            //    }
-            //    return false;
-            //};
-
-
-        }
-
-        vm.toDoLists([
-            new ToDoList(false, "Sleep Over", [
-                new Item("Fine Wine", false),
-                new Item("Sleeping bag", false)]),
-            new ToDoList(false, "Party at 5th", [
-                new Item("Fine Wine", false),
-                new Item("Jelly shots", false)]),
-        ]);
-
-
-
-        ko.applyBindings(vm);
-
-
-    </script>
+    @*<script type="text/javascript">
+    </script>*@
 }

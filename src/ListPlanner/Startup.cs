@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ListPlanner.Models;
 using ListPlanner.Services;
+using Newtonsoft.Json.Serialization;
 
 namespace ListPlanner
 {
@@ -48,7 +49,10 @@ namespace ListPlanner
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(x =>
+            {
+                x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -89,6 +93,8 @@ namespace ListPlanner
             app.UseStaticFiles();
 
             app.UseIdentity();
+//her
+            app.UseMvc();
 
             // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 

@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A938B39A-AC2B-496B-A315-A1AE2BF94656}"
 	ProjectSection(SolutionItems) = preProject
 		global.json = global.json
+		htmlIndex.html = htmlIndex.html
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ListPlanner", "src\ListPlanner\ListPlanner.xproj", "{2584C731-FCCC-4D2E-BC9A-5493F9F6FC4E}"

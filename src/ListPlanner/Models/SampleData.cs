@@ -12,7 +12,7 @@ namespace ListPlanner.Models
         public static void Initialize(IServiceProvider serviceProvider)
         {
             var context = serviceProvider.GetService<ApplicationDbContext>();
-            
+
             //context.Database.EnsureDeleted();
             //context.Database.EnsureCreated();
 
@@ -30,9 +30,13 @@ namespace ListPlanner.Models
                 var jacob = context.User.Add(
                      new User { Name = "Jacob", Alias = "J-Cop" }).Entity;
 
-                var one = context.ToDoList.Add(
-                new ToDoList {
-                    Title = "Demand Justice", User = henrik, Parent = 0,}).Entity;
+                var one = context.ToDoList.Add( 
+                new ToDoList
+                {
+                    Title = "Demand Justice",
+                    User = henrik,
+                    Parent = 0,
+                }).Entity;
                 var two = context.ToDoList.Add(
                 new ToDoList
                 {
@@ -60,39 +64,44 @@ namespace ListPlanner.Models
                 context.ListItem.AddRange(
                 new ListItem()
                 {
-                    Name = "Sleeping bag",
+                    ItemName = "Sleeping bag",
                     IsDone = false,
                     Parent = 0,
-                    ToDoList = one,
+                    ToDoList = one
+
                 },
                  new ListItem()
                  {
-                     Name = "Speedoes",
+                     ItemName = "Speedoes",
                      IsDone = true,
                      Parent = 0,
-                     ToDoList = two,
+                     ToDoList = two
+
                  },
                   new ListItem()
                   {
-                      Name = "DeadPool - BluRay",
+                      ItemName = "DeadPool - BluRay",
                       IsDone = false,
                       Parent = 0,
-                      ToDoList = one,
+                      ToDoList = three
+
 
                   },
                   new ListItem()
                   {
                       IsDone = true,
-                      Name = "Beers",
+                      ItemName = "Beers",
                       Parent = 0,
-                      ToDoList = three,
+                      ToDoList = four
+
                   },
                     new ListItem()
                     {
                         IsDone = false,
-                        Name = "Apples",
+                        ItemName = "Apples",
                         Parent = 1,
-                        ToDoList = four,
+                        ToDoList = one
+
                     }
                     );
                 context.SaveChanges();

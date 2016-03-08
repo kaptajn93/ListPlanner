@@ -15,7 +15,7 @@ namespace ListPlanner.Models
 
         [Required]
         [Display(Name = "Name")]
-        public string Name { get; set; }
+        public string ItemName { get; set; }
 
         public int Parent { get; set; }
 
