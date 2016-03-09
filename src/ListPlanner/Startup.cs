@@ -12,11 +12,14 @@ using Microsoft.Extensions.Logging;
 using ListPlanner.Models;
 using ListPlanner.Services;
 using Newtonsoft.Json.Serialization;
+using Glimpse;
 
 namespace ListPlanner
 {
     public class Startup
     {
+
+  
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
@@ -39,6 +42,8 @@ namespace ListPlanner
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddGlimpse();
+
             // Add framework services.
             services.AddEntityFramework()
                 .AddSqlServer()
@@ -62,6 +67,8 @@ namespace ListPlanner
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -93,7 +100,9 @@ namespace ListPlanner
             app.UseStaticFiles();
 
             app.UseIdentity();
-//her
+
+            //her
+            app.UseGlimpse();
             app.UseMvc();
 
             // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715

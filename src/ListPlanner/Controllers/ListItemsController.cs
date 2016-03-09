@@ -18,7 +18,7 @@ namespace ListPlanner.Controllers
         // GET: ListItems
         public IActionResult Index()
         {
-            var applicationDbContext = _context.ListItem.Include(l => l.ToDoList);
+            var applicationDbContext = _context.ListItem.Include(l => l.ToDoListID);
             return View(applicationDbContext.ToList());
         }
 

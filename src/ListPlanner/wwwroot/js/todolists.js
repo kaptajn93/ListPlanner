@@ -1,19 +1,13 @@
 ﻿
-function ToDoList(selected, name /*, ToDoListID*/) {
+function ToDoList(selected, name, items, userID) {
     var self = this;
-    //if (!item) {
-    //    item = new Item();
-    //}
-    /// todo - remove
 
     //create list
     self.selected = ko.observable(selected || false);
     self.name = ko.observable(name || '');
-    self.items = ko.observableArray(/*items ||*/ []);
+    self.items = ko.observableArray(items || []);
 
-    //self.ToDoListID = function (nextTdlID) {
-    //   return nextTdlID;
-    //}
+    self.user = ko.observable(userID || null);
 
     self.newItem = ko.observable(new Item());
 
@@ -40,8 +34,6 @@ function ToDoList(selected, name /*, ToDoListID*/) {
         //self.errorMessage('');
         self.newItem(new Item());
     }
-
-
 
     //Update items on list
 

@@ -19,9 +19,11 @@ namespace ListPlanner.Models
 
         public bool IsDone { get; set; }
 
+
+
         [ScaffoldColumn(false)]
         public int ToDoListID { get; set; }
 
-        public virtual ToDoList ToDoList { get; set; }
+        //public virtual ToDoList ToDoList { get; set; }
     }
 }

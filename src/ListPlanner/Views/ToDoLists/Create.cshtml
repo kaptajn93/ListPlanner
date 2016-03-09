@@ -6,7 +6,7 @@
 
 <h2>Create</h2>
 
-<form asp-action="Create">
+<form data-bind="submit: newToDoList">
     <div class="form-horizontal">
         <h4>ToDoList</h4>
         <hr />
@@ -14,7 +14,7 @@
         <div class="form-group">
             <label asp-for="Title" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="Title" class="form-control" />
+                <input data-bind= "value: name" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger" />
             </div>
         </div>
@@ -23,7 +23,7 @@
             <div class="col-md-10">
                 <select asp-for="UserID" class="form-control" data-bind="options: users,
                        optionsText: 'name',
-                       value: selectUser,
+                       value: selectedUser,
                        optionsCaption: 'Choose...'"></select>
                 @*<input asp-for="UserID" class="form-control" />*@
                 @*<span asp-validation-for="UserID" class="text-danger" />*@
@@ -31,7 +31,9 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
+
                 <input type="submit" value="Create" class="btn btn-default" />
+
             </div>
         </div>
     </div>
@@ -40,6 +42,7 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

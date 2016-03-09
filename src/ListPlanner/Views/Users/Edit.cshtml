@@ -15,6 +15,7 @@
             <label asp-for="Alias" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Alias" class="form-control" />
+                <input type="hidden" asp-for="UserID" class="form-control" />
                 <span asp-validation-for="Alias" class="text-danger" />
             </div>
         </div>
@@ -36,6 +37,7 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

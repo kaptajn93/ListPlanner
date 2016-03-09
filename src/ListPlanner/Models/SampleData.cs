@@ -16,7 +16,7 @@ namespace ListPlanner.Models
             //context.Database.EnsureDeleted();
             //context.Database.EnsureCreated();
 
-            context.Database.ExecuteSqlCommand("DELETE FROM dbo.[User]");
+            //context.Database.ExecuteSqlCommand("DELETE FROM dbo.[User]");
             //context.Database.ExecuteSqlCommand("DELETE FROM ToDoList");
 
             //context.Database.Migrate();
@@ -57,44 +57,7 @@ namespace ListPlanner.Models
 
 
 
-                context.ListItem.AddRange(
-                new ListItem()
-                {
-                    ItemName = "Sleeping bag",
-                    IsDone = false,
-                    ToDoList = one
-
-                },
-                 new ListItem()
-                 {
-                     ItemName = "Speedoes",
-                     IsDone = true,
-                     ToDoList = two
-
-                 },
-                  new ListItem()
-                  {
-                      ItemName = "DeadPool - BluRay",
-                      IsDone = false,
-                      ToDoList = three
-
-
-                  },
-                  new ListItem()
-                  {
-                      IsDone = true,
-                      ItemName = "Beers",
-                      ToDoList = four
-
-                  },
-                    new ListItem()
-                    {
-                        IsDone = false,
-                        ItemName = "Apples",
-                        ToDoList = one
-
-                    }
-                    );
+                
                 context.SaveChanges();
             }
         }

@@ -27,7 +27,23 @@ namespace ListPlanner.Controllers
             return View(applicationDbContext.ToList());
         }
 
+        //JUBII
+        public JsonResult toDoJson()
+        {
+            var todolist = _context.ToDoList.Include(x => x.Items);
 
+
+          //  var json = Newtonsoft.Json.JsonConvert.SerializeObject(todolist, Newtonsoft.Json.Formatting.Indented);
+
+
+            return Json (todolist);
+        }
+
+        public JsonResult toDoByUser(int userId)
+        {
+            var todolist = _context.ToDoList.Where(t => t.UserID == userId);
+            return Json(todolist);
+        }
 
         // GET: ToDoLists/Details/5
         public IActionResult Details(int? id)
@@ -58,8 +74,8 @@ namespace ListPlanner.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ToDoList toDoList)
         {
-            //if (ModelState.IsValid)
-            //{
+            if (ModelState.IsValid)
+            {
                 var user =_context.User.FirstOrDefault();
                 toDoList.User = user;
                               
@@ -67,7 +83,7 @@ namespace ListPlanner.Controllers
                 _context.ToDoList.Add(toDoList);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
-            //}
+            }
             ViewData["UserID"] = new SelectList(_context.User, "UserID", "User", toDoList.UserID);
             return View(toDoList);
         }
@@ -200,28 +216,29 @@ namespace ListPlanner.Controllers
         #region Dummy Data
         IList<ToDoList> toDoLists = new List<ToDoList>
         {
-            new ToDoList
-            {
-                Selected = false,
-                Title = "Tomato Soup",
-                Items = new List<ListItem>
-                {
-                    new ListItem { ItemName = "Tomato", IsDone = false},
-                    new ListItem { ItemName = "Soup", IsDone = false}
-                },
+
+            //new ToDoList
+            //{
+            //    Selected = false,
+            //    Title = "Tomato Soup",
+            //    Items = new List<ListItem>
+            //    {
+            //        new ListItem { ItemName = "Tomato", IsDone = false},
+            //        new ListItem { ItemName = "Soup", IsDone = false}
+            //    },
                 
-            },
-             new ToDoList
-            {
-                Selected = false,
-                Title = "Banana split",
-                Items = new List<ListItem>
-                {
-                    new ListItem { ItemName = "Banana", IsDone = false},
-                    new ListItem { ItemName = "Ice cream", IsDone = false}
-                },
+            //},
+            // new ToDoList
+            //{
+            //    Selected = false,
+            //    Title = "Banana split",
+            //    Items = new List<ListItem>
+            //    {
+            //        new ListItem { ItemName = "Banana", IsDone = false},
+            //        new ListItem { ItemName = "Ice cream", IsDone = false}
+            //    },
                
-            }
+            //}
         }; 
         #endregion
 

@@ -11,9 +11,7 @@ function ViewModel(lists) {
 
     self.users = ko.observableArray([]);
     self.selectedUser = ko.observable(null);
-    self.selectUser = function (user) {
-        self.selectedUser(user);
-    }
+   
 
     //Edit list and items on list:
     //selected list
@@ -65,8 +63,8 @@ function ViewModel(lists) {
                 }
             }
             return numDone;
-        }});
-
+        }
+    });
 
     //create list
     // temp list
@@ -111,7 +109,7 @@ function ViewModel(lists) {
     self.reload = function () {
 
         // Send an AJAX request
-        $.getJSON("/api/todolist")
+        $.getJSON("/todolists/toDoJson")
             .done(function (data) {
                 // On success, 'data' contains a list of products.
                 var lists = $.map(data, function (item) {
@@ -119,7 +117,7 @@ function ViewModel(lists) {
                         return new Item(item.itemName, item.isDone)
                     });
 
-                    var todoList = new ToDoList(item.selected, item.title, items)
+                    var todoList = new ToDoList(item.selected, item.title, items, item.userID)
                     var x = todoList.getCount();
                     return todoList;
                 });
@@ -132,19 +130,8 @@ function ViewModel(lists) {
         $.getJSON("/users/list")
             .done(function (data) {
 
+
                 console.debug('user data', data);
-
-                //// On success, 'data' contains a list of products.
-                //var lists = $.map(data, function (item) {
-                //    var items = $.map(item.items, function (item) {
-                //        return new Item(item.itemName, item.isDone)
-                //    });
-
-                //    var todoList = new ToDoList(item.selected, item.title, items)
-                //    var x = todoList.getCount();
-                //    return todoList;
-                //});
-
 
                 self.users(data);
             });

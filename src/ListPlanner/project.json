@@ -28,7 +28,8 @@
     "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
     "knockoutjs": "3.4.0",
     "bootstrap": "3.3.6",
-    "Bower": "1.3.11"
+    "Bower": "1.3.11",
+    "Glimpse": "2.0.0-beta1"
   },
 
   "commands": {
