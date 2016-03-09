@@ -17,8 +17,6 @@ namespace ListPlanner.Models
         [Display(Name = "Name")]
         public string ItemName { get; set; }
 
-        public int Parent { get; set; }
-
         public bool IsDone { get; set; }
 
         [ScaffoldColumn(false)]

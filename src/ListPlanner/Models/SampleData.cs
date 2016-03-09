@@ -35,28 +35,24 @@ namespace ListPlanner.Models
                 {
                     Title = "Demand Justice",
                     User = henrik,
-                    Parent = 0,
                 }).Entity;
                 var two = context.ToDoList.Add(
                 new ToDoList
                 {
                     Title = "Sleep-over",
                     User = theis,
-                    Parent = 0,
                 }).Entity;
                 var three = context.ToDoList.Add(
                 new ToDoList
                 {
                     Title = "Film aften",
                     User = jacob,
-                    Parent = 0,
                 }).Entity;
                 var four = context.ToDoList.Add(
                 new ToDoList
                 {
                     Title = "Festen og gæsten",
                     User = henrik,
-                    Parent = 1,
                 }).Entity;
 
 
@@ -66,7 +62,6 @@ namespace ListPlanner.Models
                 {
                     ItemName = "Sleeping bag",
                     IsDone = false,
-                    Parent = 0,
                     ToDoList = one
 
                 },
@@ -74,7 +69,6 @@ namespace ListPlanner.Models
                  {
                      ItemName = "Speedoes",
                      IsDone = true,
-                     Parent = 0,
                      ToDoList = two
 
                  },
@@ -82,7 +76,6 @@ namespace ListPlanner.Models
                   {
                       ItemName = "DeadPool - BluRay",
                       IsDone = false,
-                      Parent = 0,
                       ToDoList = three
 
 
@@ -91,7 +84,6 @@ namespace ListPlanner.Models
                   {
                       IsDone = true,
                       ItemName = "Beers",
-                      Parent = 0,
                       ToDoList = four
 
                   },
@@ -99,7 +91,6 @@ namespace ListPlanner.Models
                     {
                         IsDone = false,
                         ItemName = "Apples",
-                        Parent = 1,
                         ToDoList = one
 
                     }

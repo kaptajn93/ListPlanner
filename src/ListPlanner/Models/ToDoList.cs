@@ -14,8 +14,6 @@ namespace ListPlanner.Models
         [Required]
         public string Title { get; set; }
 
-        public int Parent { get; set; }
-
         public ICollection<ListItem> Items { get; set; }
 
         public Boolean Selected { get; set; }

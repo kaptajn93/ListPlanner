@@ -9,6 +9,12 @@ function ViewModel(lists) {
     var self = this;
     self.toDoLists = ko.observableArray(lists || []);
 
+    self.users = ko.observableArray([]);
+    self.selectedUser = ko.observable(null);
+    self.selectUser = function (user) {
+        self.selectedUser(user);
+    }
+
     //Edit list and items on list:
     //selected list
     self.selectedList = ko.observable(null);
@@ -68,6 +74,12 @@ function ViewModel(lists) {
 
     self.addToDoList = function () {
 
+        //self.NextToDoListID = function () {
+        //    var nextTdlID = calldb.getNextToDoListID();
+        //    Item.getNextToDoListID(nextTdlID);
+        //    return nextTdlID;
+        //}
+
         var listToBeAdded = self.newToDoList();
 
         if (listToBeAdded.name().length <= '1') {
@@ -97,6 +109,7 @@ function ViewModel(lists) {
 
     //load data into site (from controller)
     self.reload = function () {
+
         // Send an AJAX request
         $.getJSON("/api/todolist")
             .done(function (data) {
@@ -113,6 +126,27 @@ function ViewModel(lists) {
                
 
                 self.toDoLists(lists);
+            });
+
+        // Send an AJAX request
+        $.getJSON("/users/list")
+            .done(function (data) {
+
+                console.debug('user data', data);
+
+                //// On success, 'data' contains a list of products.
+                //var lists = $.map(data, function (item) {
+                //    var items = $.map(item.items, function (item) {
+                //        return new Item(item.itemName, item.isDone)
+                //    });
+
+                //    var todoList = new ToDoList(item.selected, item.title, items)
+                //    var x = todoList.getCount();
+                //    return todoList;
+                //});
+
+
+                self.users(data);
             });
     }
 

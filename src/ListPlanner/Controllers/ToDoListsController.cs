@@ -58,12 +58,16 @@ namespace ListPlanner.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ToDoList toDoList)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
+                var user =_context.User.FirstOrDefault();
+                toDoList.User = user;
+                              
+
                 _context.ToDoList.Add(toDoList);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
-            }
+            //}
             ViewData["UserID"] = new SelectList(_context.User, "UserID", "User", toDoList.UserID);
             return View(toDoList);
         }
@@ -128,6 +132,16 @@ namespace ListPlanner.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+
+
+        //public ActionResult getID (ToDoList toDoList)
+        //{
+        //   var ToDoListID = _context.ToDoList.OrderByDescending(ID => ID.ToDoListID).FirstOrDefault();
+
+        //    return ToDoListID;
+
+        //}
+
     }
 
 
