@@ -19,8 +19,7 @@ namespace ListPlanner.Models
 
         public bool IsDone { get; set; }
 
-
-
+        [Required]
         [ScaffoldColumn(false)]
         public int ToDoListID { get; set; }
 

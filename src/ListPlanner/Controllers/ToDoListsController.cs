@@ -4,11 +4,23 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using ListPlanner.Models;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net;
 
 namespace ListPlanner.Controllers
 {
 
+    public class AjaxResponse
+    {
+        public string Message { get; set; }
+        public bool IsSuccess { get; set; }
+        public List<string> Errors { get; set; }
 
+        public AjaxResponse()
+        {
+            Errors = new List<string>();
+        }
+    }
 
 
     public class ToDoListsController : Controller
@@ -31,12 +43,8 @@ namespace ListPlanner.Controllers
         public JsonResult toDoJson()
         {
             var todolist = _context.ToDoList.Include(x => x.Items);
-
-
-          //  var json = Newtonsoft.Json.JsonConvert.SerializeObject(todolist, Newtonsoft.Json.Formatting.Indented);
-
-
-            return Json (todolist);
+            //  var json = Newtonsoft.Json.JsonConvert.SerializeObject(todolist, Newtonsoft.Json.Formatting.Indented);
+            return Json(todolist);
         }
 
         public JsonResult toDoByUser(int userId)
@@ -71,21 +79,40 @@ namespace ListPlanner.Controllers
 
         // POST: ToDoLists/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(ToDoList toDoList)
+        // [ValidateAntiForgeryToken]
+        public JsonResult Create([FromBody]ToDoList toDoList)
         {
             if (ModelState.IsValid)
             {
-                var user =_context.User.FirstOrDefault();
-                toDoList.User = user;
-                              
-
+                //var user = toDoList.UserID;
+                //toDoList.User = user;
                 _context.ToDoList.Add(toDoList);
                 _context.SaveChanges();
-                return RedirectToAction("Index");
+                //return RedirectToAction("Index");
+                return Json(new AjaxResponse { IsSuccess = true });
             }
-            ViewData["UserID"] = new SelectList(_context.User, "UserID", "User", toDoList.UserID);
-            return View(toDoList);
+
+            //ViewData["UserID"] = new SelectList(_context.User, "UserID", "User", toDoList.UserID);
+            //return View(toDoList);
+
+            var errorList = ModelState.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+            );
+
+            var error = new
+            {
+                ErrorCount = ModelState.ErrorCount,
+                Errors = errorList,
+                Message = "Ret fejlen"
+            };
+
+            return Json(new AjaxResponse {
+                IsSuccess = false,
+                Errors = errorList.Select(x => string.Join(",", x.Value)).ToList(),
+                Message = "An error occured!"
+            });
+
         }
 
         // GET: ToDoLists/Edit/5
@@ -226,7 +253,7 @@ namespace ListPlanner.Controllers
             //        new ListItem { ItemName = "Tomato", IsDone = false},
             //        new ListItem { ItemName = "Soup", IsDone = false}
             //    },
-                
+
             //},
             // new ToDoList
             //{
@@ -237,9 +264,9 @@ namespace ListPlanner.Controllers
             //        new ListItem { ItemName = "Banana", IsDone = false},
             //        new ListItem { ItemName = "Ice cream", IsDone = false}
             //    },
-               
+
             //}
-        }; 
+        };
         #endregion
 
         // /api/products
@@ -253,7 +280,7 @@ namespace ListPlanner.Controllers
         [HttpGet("{id}")]
         public IActionResult GetProduct(int id)
         {
-          
+
 
             var toDoList = toDoLists.FirstOrDefault((p) => p.ToDoListID == id);
             if (toDoList == null)

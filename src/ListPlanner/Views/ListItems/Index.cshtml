@@ -4,7 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-<div>
     <h2>Index</h2>
 
     <p>
@@ -16,10 +15,10 @@
                 @Html.DisplayNameFor(model => model.IsDone)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.ItemName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Parent)
+                @Html.DisplayNameFor(model => model.ToDoListID)
             </th>
             <th></th>
         </tr>
@@ -31,10 +30,10 @@
                     @Html.DisplayFor(modelItem => item.IsDone)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.ItemName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Parent)
+                    @Html.DisplayFor(modelItem => item.ToDoListID)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ListItemID">Edit</a> |
@@ -45,68 +44,6 @@
         }
     </table>
 
-    <hr />
-</div>
-
-<table class="table">
-    <tr>
-        <th> Name</th>
-        <th>is Done</th>
-    </tr>
-    <tbody data-bind="foreach: items">
-        <tr>
-            <td><text data-bind="text: name" /> </td>
-            <td><input type="checkbox" data-bind="text: isDone" /> </td>
-            <td><a href="#" data-bind="click: $root.removeItem">Remove</a></td>
-        </tr>
-    </tbody>
-</table>
-<h4>Items on list (<span data-bind="text: items().length"></span>)</h4>
-
-@*--------------------------------button to tricker modal------------------------------------*@
-<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
-    Ny Liste
-</button>
-@*-------------------------------------modal-------------------------------------------------------*@
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">New List</h4>
-            </div>
-            <div class="modal-body">
-
-                <h2><input type="text" data-bind="listName" placeholder="List name"/></h2>
-                <table class="table">
-                    <tr>
-                        <th> Name</th>
-                        <th>is Done</th>
-                    </tr>
-                    <tbody data-bind="foreach: items">
-                        <tr>
-                            <td><text data-bind="text: name" /> </td>
-                            <td><input type="checkbox" data-bind="text: isDone" /> </td>
-                            <td><a href="#" data-bind="click: $root.removeItem">Remove</a></td>
-                        </tr>
-                    </tbody>
-                    <tr>
-                        <td><input type="text" data-bind="value:newItem().name" placeholder="insert item name" /></td>
-                        <td><button data-bind="click: addItem">Add an item</button></td>
-                    </tr>
-                </table>
-                <h4>Items on list (<span data-bind="text: items().length"></span>)</h4>
-
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 @section scripts {
     <script type="text/javascript">
@@ -115,30 +52,30 @@
 
 
         
-        function Item(name, isDone) {
-            var self = this;
-            self.name = ko.observable(name);
-            self.isDone = ko.observable(isDone);
-            //self.listName = ko.observable(listName);
-            self.thisItem = ko.computed(function () {
-                return self.name() + "," + self.isDone(false)
-            })
-        }
+        //function Item(name, isDone) {
+        //    var self = this;
+        //    self.name = ko.observable(name);
+        //    self.isDone = ko.observable(isDone);
+        //    //self.listName = ko.observable(listName);
+        //    self.thisItem = ko.computed(function () {
+        //        return self.name() + "," + self.isDone(false)
+        //    })
+        //}
 
-        function ItemsViewModel() {
-            var self = this;
-            self.items = ko.observableArray([
-                new Item("Fine wine", false),
-                new Item("Ham", false)
-            ]);
-            self.newItem = ko.observable(new Item());
+        //function ItemsViewModel() {
+        //    var self = this;
+        //    self.items = ko.observableArray([
+        //        new Item("Fine wine", false),
+        //        new Item("Ham", false)
+        //    ]);
+        //    self.newItem = ko.observable(new Item());
 
-            self.addItem = function () {
-                self.items.push(new Item(self.newItem().name(), self.newItem().isDone()));
-                self.newItem().name("");
-            }
-            self.removeItem = function (item) { self.items.remove(item) }
-        }
-        ko.applyBindings(new ItemsViewModel());
+        //    self.addItem = function () {
+        //        self.items.push(new Item(self.newItem().name(), self.newItem().isDone()));
+        //        self.newItem().name("");
+        //    }
+        //    self.removeItem = function (item) { self.items.remove(item) }
+        //}
+        //ko.applyBindings(new ItemsViewModel());
     </script>
 }

@@ -4,6 +4,7 @@
     ViewData["Title"] = "Index";
 
 }
+@Html.AntiForgeryToken()
 <table class="table table-hover">
     <thead>
         <tr>
@@ -15,7 +16,7 @@
     </thead>
     <tbody data-bind="foreach: toDoLists">
 
-        <tr data-toggle="modal" data-target="#currentList" id="setSuccess" data-bind="click: $parent.selectList.bind($data), css: cssStatusClass">
+        <tr data-toggle="modal" data-target="#currentList" id="setSuccess" data-bind="click: $parent.selectedList.bind($data), css: cssStatusClass">
             <td colspan="2"><h4><text data-bind="text: name" /></h4></td>
             <td><h4><text data-bind="text: itemCount" /></h4></td>
             <td><h4><text data-bind="text: allDoneText()" /></h4></td>
@@ -35,7 +36,6 @@
 <button type="button" class="btn btn-primary btn-md" data-bind="click:reload">
     Reload
 </button>
-
 @*-------------------------------------modal-------------------------------------------------------*@
 <br />
 <hr />
@@ -79,7 +79,7 @@
                     <tr>
                         <td><input class="form-control" type="text" data-bind="value: newItemOnSelected().itemName" placeholder="insert item name" /></td>
                         <td><h1>&nbsp;</h1></td>
-                        <td><button type="button" class="btn btn-primary" data-bind="click: addItemToSelectedList">Add an item</button></td>
+                        <td><button type="button" class="btn btn-primary" data-bind="click: saveItem">Add an item</button></td>
                     </tr>
                 </table>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -143,6 +143,9 @@
                    @*<button type="button" class="btn btn-primary" data-bind="click: $parent.addToDoList">Save changes</button>*@
 
                     <input type="submit" value="Create" class="btn btn-primary" data-bind="click: $parent.addToDoList" />
+                    <button type="button" class="btn btn-primary btn-md" data-bind="click: $parent.saveList">
+                        Save Data
+                    </button>
                 </div>
 
             </div><!-- /.modal-content -->

@@ -4,6 +4,7 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using ListPlanner.Models;
 
+
 namespace ListPlanner.Controllers
 {
     public class ListItemsController : Controller
@@ -16,10 +17,13 @@ namespace ListPlanner.Controllers
         }
 
         // GET: ListItems
+
+
         public IActionResult Index()
         {
-            var applicationDbContext = _context.ListItem.Include(l => l.ToDoListID);
-            return View(applicationDbContext.ToList());
+            // var applicationDbContext = _context.ListItem.Include(l => l.ToDoList);
+            //return View(applicationDbContext.ToList());
+            return View(_context.ListItem.ToList());
         }
 
         // GET: ListItems/Details/5
@@ -45,21 +49,57 @@ namespace ListPlanner.Controllers
             ViewData["ToDoListID"] = new SelectList(_context.Set<ToDoList>(), "ToDoListID", "ToDoList");
             return View();
         }
+        //// POST: ListItems/Create
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult Create(ListItem listItem)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.ListItem.Add(listItem);
+        //        _context.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+        //    ViewData["ToDoListID"] = new SelectList(_context.Set<ToDoList>(), "ToDoListID", "ToDoList", listItem.ToDoListID);
+        //    return View(listItem);
+        //}
 
         // POST: ListItems/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(ListItem listItem)
+        // [ValidateAntiForgeryToken]
+        public JsonResult Create([FromBody]ListItem listItem)
         {
             if (ModelState.IsValid)
             {
+              
                 _context.ListItem.Add(listItem);
                 _context.SaveChanges();
-                return RedirectToAction("Index");
+                return Json(new AjaxResponse { IsSuccess = true });
             }
-            ViewData["ToDoListID"] = new SelectList(_context.Set<ToDoList>(), "ToDoListID", "ToDoList", listItem.ToDoListID);
-            return View(listItem);
+
+         
+
+            var errorList = ModelState.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+            );
+
+            var error = new
+            {
+                ErrorCount = ModelState.ErrorCount,
+                Errors = errorList,
+                Message = "Ret fejlen"
+            };
+
+            return Json(new AjaxResponse
+            {
+                IsSuccess = false,
+                Errors = errorList.Select(x => string.Join(",", x.Value)).ToList(),
+                Message = "An error occured!"
+            });
+
         }
+
 
         // GET: ListItems/Edit/5
         public IActionResult Edit(int? id)

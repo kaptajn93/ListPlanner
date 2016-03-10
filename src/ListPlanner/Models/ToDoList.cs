@@ -18,6 +18,7 @@ namespace ListPlanner.Models
 
         public Boolean Selected { get; set; }
 
+        [Required]
         [ScaffoldColumn(false)]
         public int UserID { get; set; }
 

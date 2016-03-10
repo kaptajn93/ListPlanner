@@ -1,5 +1,5 @@
 ﻿
-function ToDoList(selected, name, items, userID) {
+function ToDoList(selected, name, items, userID, toDoListID) {
     var self = this;
 
     //create list
@@ -8,6 +8,7 @@ function ToDoList(selected, name, items, userID) {
     self.items = ko.observableArray(items || []);
 
     self.user = ko.observable(userID || null);
+    self.toDoListID = ko.observable(toDoListID || null)
 
     self.newItem = ko.observable(new Item());
 
