@@ -59,12 +59,14 @@
                         <tr>
                             <th> Name</th>
                             <th>Done</th>
+                            <th>ID</th>
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: selectedList().items()">
                         <tr>
                             <td><h3><text data-bind="text: itemName" /></h3></td>
                             <td><input type="checkbox" style="zoom:2.0" data-bind="checked: isDone" /></td>
+                            <td><h3><text data-bind="text: listItemID" /></h3></td>
                             <td>
                                 <button type="button" class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeItemFromSelectedList">&times;</button>
                             </td>

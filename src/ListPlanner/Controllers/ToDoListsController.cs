@@ -167,13 +167,13 @@ namespace ListPlanner.Controllers
 
         // POST: ToDoLists/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
             ToDoList toDoList = _context.ToDoList.Single(m => m.ToDoListID == id);
             _context.ToDoList.Remove(toDoList);
             _context.SaveChanges();
-            return RedirectToAction("Index");
+            return Json("OK");
         }
 
 

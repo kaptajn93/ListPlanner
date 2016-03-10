@@ -140,7 +140,38 @@ function ViewModel(lists) {
 
     //remove list
     self.removeToDoList = function (toDoList) {
-        self.toDoLists.remove(toDoList);
+        
+        
+
+            $.ajax({
+                method: "POST",
+                url: "/todolists/Delete/" + toDoList.toDoListID(),
+                contentType: "application/json",
+                dataType: "json",
+                //headers: {
+                //    'RequestVerificationToken': '@TokenHeaderValue()'
+                //}
+            })
+              .done(function (data, textStatus, jqXHR) {
+                  alert("success");
+                  //self.toDoLists.remove(toDoList);
+
+              })
+              .fail(function (jqXHR, textStatus, errorThrown) {
+                  alert("error");
+              })
+              .always(function (data, textStatus) {
+                  alert("complete");
+              });
+       
+
+            
+
+
+
+
+
+
     }
 
     self.resetList = function () {
@@ -162,9 +193,9 @@ function ViewModel(lists) {
                 // On success, 'data' contains a list of products.
                 var lists = $.map(data, function (item) {
                     var items = $.map(item.items, function (item) {
-                        return new Item(item.itemName, item.isDone, item.toDoListID)
+                        return new Item(item.itemName, item.isDone, item.toDoListID, item.listItemID)
                     });
-                    var todoList = new ToDoList(item.selected, item.title, items, item.userID, item.toDoListID)
+                    var todoList = new ToDoList(item.selected, item.title, items, item.userID, item.toDoListID, item.listItemID)
                     var x = todoList.getCount();
                     return todoList;
                 });
