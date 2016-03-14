@@ -159,7 +159,7 @@ namespace ListPlanner.Controllers
             ListItem listItem = _context.ListItem.Single(m => m.ListItemID == id);
             _context.ListItem.Remove(listItem);
             _context.SaveChanges();
-            return RedirectToAction("Index");
+            return Json("OK");
         }
     }
 }

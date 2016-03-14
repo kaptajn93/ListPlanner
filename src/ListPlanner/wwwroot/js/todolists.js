@@ -12,9 +12,9 @@ function ToDoList(selected, name, items, userID, toDoListID) {
 
     self.newItem = ko.observable(new Item());
 
-    self.addItem = function () {
+    self.addItem = function (item) {
 
-        var itemToBeAdded = self.newItem();
+        var itemToBeAdded = item ? item : self.newItem();
 
         if (itemToBeAdded.itemName().length <= '1') {
             alert('Name is required to be > 1');

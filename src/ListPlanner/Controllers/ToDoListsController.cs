@@ -9,19 +9,16 @@ using System.Net;
 
 namespace ListPlanner.Controllers
 {
-
     public class AjaxResponse
     {
         public string Message { get; set; }
         public bool IsSuccess { get; set; }
         public List<string> Errors { get; set; }
-
         public AjaxResponse()
         {
             Errors = new List<string>();
         }
     }
-
 
     public class ToDoListsController : Controller
     {
@@ -107,7 +104,8 @@ namespace ListPlanner.Controllers
                 Message = "Ret fejlen"
             };
 
-            return Json(new AjaxResponse {
+            return Json(new AjaxResponse
+            {
                 IsSuccess = false,
                 Errors = errorList.Select(x => string.Join(",", x.Value)).ToList(),
                 Message = "An error occured!"
@@ -175,15 +173,38 @@ namespace ListPlanner.Controllers
             _context.SaveChanges();
             return Json("OK");
         }
+        //_____________________________________________Items
 
+        // GET: /todolists/DeleteItems/5
+        [ActionName("DeleteItems")]
+        public IActionResult DeleteItems(int? id)
+        {
+            if (id == null)
+            {
+                return HttpNotFound();
+            }
 
-        //public ActionResult getID (ToDoList toDoList)
-        //{
-        //   var ToDoListID = _context.ToDoList.OrderByDescending(ID => ID.ToDoListID).FirstOrDefault();
+            ListItem listItem = _context.ListItem.Single(m => m.ListItemID == id);
+            if (listItem == null)
+            {
+                return HttpNotFound();
+            }
 
-        //    return ToDoListID;
+            return View(listItem);
+        }
 
-        //}
+        // POST: ListItems/Delete/5
+        [HttpPost, ActionName("DeleteItems")]
+        //[ValidateAntiForgeryToken]
+        public IActionResult DeleteItemsConfirmed(int id)
+        {
+            ListItem listItem = _context.ListItem.Single(m => m.ListItemID == id);
+            _context.ListItem.Remove(listItem);
+            _context.SaveChanges();
+            return Json("OK");
+        }
+
+//______________________________________________
 
     }
 
@@ -243,29 +264,6 @@ namespace ListPlanner.Controllers
         #region Dummy Data
         IList<ToDoList> toDoLists = new List<ToDoList>
         {
-
-            //new ToDoList
-            //{
-            //    Selected = false,
-            //    Title = "Tomato Soup",
-            //    Items = new List<ListItem>
-            //    {
-            //        new ListItem { ItemName = "Tomato", IsDone = false},
-            //        new ListItem { ItemName = "Soup", IsDone = false}
-            //    },
-
-            //},
-            // new ToDoList
-            //{
-            //    Selected = false,
-            //    Title = "Banana split",
-            //    Items = new List<ListItem>
-            //    {
-            //        new ListItem { ItemName = "Banana", IsDone = false},
-            //        new ListItem { ItemName = "Ice cream", IsDone = false}
-            //    },
-
-            //}
         };
         #endregion
 
@@ -289,20 +287,6 @@ namespace ListPlanner.Controllers
             }
             return new ObjectResult(toDoList);
         }
-
-        //ListItem[] items = new ListItem[]
-        //{
-        //    new ListItem {Name = "hej", ToDoListID = 0, ListItemID= 0, Parent = 0, IsDone = false },
-        //    new ListItem {Name = "hej1", ToDoListID = 0, ListItemID= 1, Parent = 0, IsDone = false },
-        //};
     }
 }
 
-//vm.toDoLists([
-//    new ToDoList(false, "Sleep Over", [
-//        new Item("Fine Wine", false),
-//        new Item("Sleeping bag", false)]),
-//    new ToDoList(false, "Party at 5th", [
-//        new Item("Fine Wine", false),
-//        new Item("Jelly shots", false)]),
-//]);

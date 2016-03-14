@@ -1,7 +1,14 @@
 ﻿
+
+// showModal: myObservable 
 // bindinghandlers: 
 ko.bindingHandlers.showModal = {
     init: function (element, valueAccessor, allBindingsAccessor, ViewModel, bindingContext) {
+
+
+
+
+
 
         var x = ViewModel;
         var test = function () {
@@ -15,19 +22,15 @@ ko.bindingHandlers.showModal = {
         //var handler = bindingContext.$parent.selectList.bind(bindingContext.$data);
         //ko.bindingHandlers.click.init(element, handler, allBindingsAccessor, ViewModel, bindingContext);
     },
-
-
-
-
     update: function (element, valueAccessor) {
-        
+
         var value = valueAccessor();
         var modalElement = $("#currentList");
 
         if (ko.utils.unwrapObservable(value)) {
             modalElement.modal('show');
             // this is to focus input field inside dialog
-            $("input", modalElement).focus();
+            //$("input", modalElement).focus();
         }
         else {
             modalElement.modal('hide');
@@ -59,20 +62,34 @@ function ViewModel(lists) {
 
     self.users = ko.observableArray([]);
     self.selectedUser = ko.observable(null);
-   
 
     //Edit list and items on list:
     //selected list
     self.selectedList = ko.observable(null).logIt('selectedList');
 
-
     self.selectList = function (list) {
-        self.selectedList(list);
+        var listToSelect = list;
+        if (typeof (listToSelect) !== 'object') {
+            listToSelect = self.getListById(list);
+        }
+
+        self.selectedList(listToSelect);
     }
 
-    self.removeItemFromSelectedList = function (item) {
-        self.selectedList().removeItem(item);
-    }
+
+    self.getListById = function (listID) {
+        var list = ko.utils.arrayFirst(self.toDoLists(), function (list, index) {
+            if (list.toDoListID() === listID) {
+                return list;
+            }
+        });
+        return list;
+    };
+
+
+    //self.removeItemFromSelectedList = function (item) {
+    //    self.selectedList().removeItem(item);
+    //}
 
     self.newItemOnSelected = ko.observable(new Item());
 
@@ -140,39 +157,56 @@ function ViewModel(lists) {
 
     //remove list
     self.removeToDoList = function (toDoList) {
-        
-        
 
-            $.ajax({
-                method: "POST",
-                url: "/todolists/Delete/" + toDoList.toDoListID(),
-                contentType: "application/json",
-                dataType: "json",
-                //headers: {
-                //    'RequestVerificationToken': '@TokenHeaderValue()'
-                //}
-            })
-              .done(function (data, textStatus, jqXHR) {
-                  alert("success");
-                  //self.toDoLists.remove(toDoList);
+        $.ajax({
+            method: "POST",
+            url: "/todolists/Delete/" + toDoList.toDoListID(),
+            contentType: "application/json",
+            dataType: "json",
+            //headers: {
+            //    'RequestVerificationToken': '@TokenHeaderValue()'
+            //}
+        })
+          .done(function (data, textStatus, jqXHR) {
+              alert("success");
+              self.reload();
+              //self.toDoLists.remove(toDoList);
 
-              })
-              .fail(function (jqXHR, textStatus, errorThrown) {
-                  alert("error");
-              })
-              .always(function (data, textStatus) {
-                  alert("complete");
-              });
-       
-
-            
-
-
-
-
-
+          })
+          .fail(function (jqXHR, textStatus, errorThrown) {
+              alert("error");
+          })
+          .always(function (data, textStatus) {
+              alert("complete");
+          });
 
     }
+
+    self.removeItem = function (listItem) {
+
+        $.ajax({
+            method: "POST",
+            url: "/todolists/DeleteItems/" + listItem.listItemID(),
+            contentType: "application/json",
+            dataType: "json",
+        })
+        .done(function (data, textStatus, jqXHR) {
+            var currentlistID = listItem.toDoListID();
+
+            var onReloadCallback = function () {
+                console.debug('onReloadCallback')
+                self.selectList(currentlistID);
+            }
+            self.reload(onReloadCallback);
+
+   //         self.refreshModal(currentList);
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+              alert("error");
+        })
+
+        //self.selectedList().removeItem(listItem);
+      }
 
     self.resetList = function () {
         //self.errorMessage('');
@@ -186,20 +220,30 @@ function ViewModel(lists) {
     });
 
     //load data into site (from controller)
-    self.reload = function () {
+    self.reload = function (callback) {
+        console.debug('reload')
+
+        self.toDoLists([]);
         // Send an AJAX request Todolist
         $.getJSON("/todolists/toDoJson")
             .done(function (data) {
+                console.debug('todolists result', data);
+
                 // On success, 'data' contains a list of products.
                 var lists = $.map(data, function (item) {
                     var items = $.map(item.items, function (item) {
                         return new Item(item.itemName, item.isDone, item.toDoListID, item.listItemID)
                     });
-                    var todoList = new ToDoList(item.selected, item.title, items, item.userID, item.toDoListID, item.listItemID)
+                    var todoList = new ToDoList(item.selected, item.title, items, item.userID, item.toDoListID)
                     var x = todoList.getCount();
                     return todoList;
                 });
                 self.toDoLists(lists);
+
+                if ($.isFunction(callback)) {
+                    callback(lists);
+                }
+                
             });
         // Send an AJAX request User
         $.getJSON("/users/list")
@@ -209,32 +253,37 @@ function ViewModel(lists) {
             });
     }
 
+    self.refreshModal = function (currentList) {
+      
+    }
+
     self.saveList = function () {
         var data = ko.toJSON({
             Title: self.newToDoList().name,
             UserID: self.newToDoList().user().userID,
             Selected: self.newToDoList().selected,
         });
-                
-        $.ajax( {
+
+        $.ajax({
             method: "POST",
             url: "/todolists/Create",
-            data: data ,
+            data: data,
             contentType: "application/json",
             dataType: "json",
             //headers: {
             //    'RequestVerificationToken': '@TokenHeaderValue()'
             //}
         })
-          .done(function(data, textStatus, jqXHR) {
-              alert( "success" );
+          .done(function (data, textStatus, jqXHR) {
+            //  self.reload();
+          //    alert( "success" );
           })
-          .fail(function( jqXHR, textStatus, errorThrown) {
-              alert( "error" );
+          .fail(function (jqXHR, textStatus, errorThrown) {
+              alert("error");
           })
-          .always(function(data, textStatus) {
-              alert( "complete" );
-          });
+        //.always(function(data, textStatus) {
+        //    alert( "complete" );
+        //});
     };
 
     self.saveItem = function () {
@@ -258,29 +307,33 @@ function ViewModel(lists) {
         })
           .done(function (data, textStatus, jqXHR) {
               console.debug("success", data);
-              
               //self.reload();
               var first = ko.utils.arrayFirst(vm.toDoLists(), function (list, index) {
-                  if (list.toDoListID() === listID) return list;
+                  if (list.toDoListID() === listID) {
+                      return list;
+                  }
+                  self.refreshModal(first);
               });
 
               var newItem = self.newItemOnSelected();
-              self.selectedList().items.push(newItem);
+              
+              self.selectedList().addItem(newItem);
+              
+             // self.refreshModal(first);
 
-              //self.selectList(null);
-              //self.selectList(first);
+              //self.selectedList(null);
+              //self.selectedList(first);
           })
           .fail(function (jqXHR, textStatus, errorThrown) {
               alert("error");
           })
-          .always(function (data, textStatus) {
-              alert("complete");
-          });
+        //.always(function (data, textStatus) {
+        //    alert("complete");
+        //});
     };
+    // load initial data
+    self.reload();
 
-// load initial data
-self.reload();
-    
 }
 
 //vm.toDoLists([

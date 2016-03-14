@@ -16,7 +16,15 @@
     </thead>
     <tbody data-bind="foreach: toDoLists">
 
-        <tr data-toggle="modal" data-target="#currentList" id="setSuccess" data-bind="click: $parent.selectedList.bind($data), css: cssStatusClass">
+        @*<tr data-toggle="modal" data-target="#currentList" id="setSuccess" data-bind="showModal: $parent.selectedList.bind($data), css: cssStatusClass">
+            <td colspan="2"><h4><text data-bind="text: name" /></h4></td>
+            <td><h4><text data-bind="text: itemCount" /></h4></td>
+            <td><h4><text data-bind="text: allDoneText()" /></h4></td>
+            <td><button class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeToDoList">&times;</button></td>
+        </tr>*@
+
+
+        <tr id="setSuccess" data-bind="showModal: $parent.selectedList.bind($data), css: cssStatusClass">
             <td colspan="2"><h4><text data-bind="text: name" /></h4></td>
             <td><h4><text data-bind="text: itemCount" /></h4></td>
             <td><h4><text data-bind="text: allDoneText()" /></h4></td>
@@ -24,7 +32,6 @@
         </tr>
 
     </tbody>
-
 </table>
 <br />
 <div class="col-lg-offset-9"><h4>You have <span data-bind="text: toDoLists().length"></span> lists</h4></div>
@@ -39,15 +46,13 @@
 @*-------------------------------------modal-------------------------------------------------------*@
 <br />
 <hr />
-<!-- ko if: selectedList() -->
-@*from before
-    <div id="currentList" data-bind="visible:selectedList()">*@
 
 <div class="modal fade" id="currentList" tabindex="-1" role="dialog" data-bind="visible:selectedList()">
+    <!-- ko if: selectedList() -->
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" data-bind="closeModal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h2 class="modal-title"><text data-bind="text: selectedList().name" /></h2>
             </div>
             <div class="modal-body">
@@ -68,7 +73,7 @@
                             <td><input type="checkbox" style="zoom:2.0" data-bind="checked: isDone" /></td>
                             <td><h3><text data-bind="text: listItemID" /></h3></td>
                             <td>
-                                <button type="button" class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeItemFromSelectedList">&times;</button>
+                                <button type="button" class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeItem">&times;</button>
                             </td>
                         </tr>
                     </tbody>
@@ -85,16 +90,14 @@
                     </tr>
                 </table>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                @*<button type="button" class="btn btn-primary" data-bind="click: $parent. updateList">Save changes</button>*@
             </div>
             <br />
         </div>
     </div>
+    <!-- /ko -->
+
 </div>
-<!-- /ko -->
 @*-------------------------------------modal-------------------------------------------------------*@
-
-
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" data-bind="with: newToDoList">
         <div class="modal-dialog">
@@ -104,7 +107,6 @@
                     <h4 class="modal-title">New List</h4>
                 </div>
                 <div class="modal-body">
-
                     <label>List belongs to:</label>
                     <select name="User" class="form-control" data-bind="options: $parent.users(),
                        optionsText: 'name',
@@ -112,98 +114,30 @@
                        optionsCaption: 'Choose...'"></select>
                     <label>List name:</label>
                     <input input class="form-control input-lg" type="text" data-bind="value: $parent.newToDoList().name, valueUpdate:'keyup'" placeholder="List name" />
-                   <div class="col-lg-offset-9"><h4>Items on list (<span data-bind="text: items().length"></span>)</h4></div>
-
-                    <table class="table">
-                            <tr>
-                                <th> Name</th>
-                                <th>is Done</th>
-                                <th></th>
-                            </tr>
-                            <tbody data-bind="foreach: items">
-                                <tr>
-                                    <td><h4><text data-bind="text: itemName" /></h4></td>
-                                    <td><input type="checkbox" style="zoom:1.5" data-bind="checked: isDone" /> </td>
-                                    <td><button class="close" style="zoom:2.0; color:red" data-bind="click: $parent.removeItem">&times;</button></td>
-                                </tr>
-                            </tbody>
-
-
-
-                        </table>
-
-                        <br />
-                        <table>
-                            <tr>
-                                <td><input class="form-control" type="text" data-bind="value: newItem().itemName" placeholder="insert item name" /></td>
-                                <td><button type="button" class="btn btn-primary btn-sm" data-bind="click: addItem">Add an item</button></td>
-                            </tr>
-                        </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                   @*<button type="button" class="btn btn-primary" data-bind="click: $parent.addToDoList">Save changes</button>*@
-
-                    <input type="submit" value="Create" class="btn btn-primary" data-bind="click: $parent.addToDoList" />
                     <button type="button" class="btn btn-primary btn-md" data-bind="click: $parent.saveList">
                         Save Data
                     </button>
                 </div>
-
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-
 @section footer {
     <hr />
 <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
-
 }
-
 @*______________________________________________Script section_____________________________________________*@
 
 @section scripts {
-
     <script src="~/js/listitems.js"></script>
     <script src="~/js/todolists.js"></script>
     <script src="~/js/viewmodels/todolist.index.js"></script>
     @*<script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
         <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>*@
-
     @*<script type="text/javascript">
         </script>*@
 }
-
-
-@*<form asp-action="Create">
-        <div class="form-horizontal">
-            <h4>ToDoList</h4>
-            <hr />
-            <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
-            </div>
-            <div class="form-group">
-                <label asp-for="Title" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger" />
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
-                </div>
-            </div>
-        </div>
-    </form>
-
-    <div>
-        <a asp-action="Index">Back to List</a>
-    </div>
-
-    @section Scripts {
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    }*@

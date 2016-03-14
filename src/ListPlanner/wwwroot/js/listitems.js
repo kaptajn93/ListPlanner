@@ -11,6 +11,6 @@
 //};
 
     self.thisItem = ko.computed(function () {
-        return self.itemName() + "," + self.isDone() + "," + self.toDoListID() + "," + self.listItemID()
+        return self.itemName() + "," + self.isDone() + "," + self.toDoListID() + "," + self.listItemID();
     })
 }
