@@ -43,11 +43,10 @@ ko.subscribable.fn.logIt = function (name) {
 
     return this;
 };
-function closeCurrentItems() {
 
-    document.getElementById("currentList").style.display = "none";
-}
-
+//function closeCurrentItems() {
+//    document.getElementById("currentList").style.display = "none";
+//}
 
 function ViewModel(lists) {
 
@@ -55,11 +54,8 @@ function ViewModel(lists) {
     var self = this;
     self.toDoLists = ko.observableArray(lists || []);
     self.users = ko.observableArray([]);
-
     self.selectedUser = ko.observable(null);
-
-    self.selectedList = ko.observable(null)/*.logIt('selectedList')*/;
-    self.newItemOnSelected = ko.observable(new Item());
+    self.selectedList = ko.observable(null).logIt('selectedList');
     self.newToDoList = ko.observable(new ToDoList());
 
     //selectedlist functions:
@@ -70,22 +66,7 @@ function ViewModel(lists) {
             listToSelect = self.getListById(list);
         }
         self.selectedList(listToSelect);
-    }       //vm
-    self.addItemToSelectedList = function () {
-        DontshowLast = false;
-        var itemToBeAdded = self.newItemOnSelected();
-
-        if (itemToBeAdded.itemName().length <= '1') {
-            alert('Name is required to be > 1');
-            return false;
-        }
-        
-        self.resetSelectedItem = function () {
-            //self.errorMessage('');
-            self.newItemOnSelected(new Item());
-        }
-        self.resetSelectedItem();
-    } //todolist
+    } 
     self.getListById = function (listID) {
         var list = ko.utils.arrayFirst(self.toDoLists(), function (list, index) {
             if (list.toDoListID() === listID) {
@@ -93,11 +74,10 @@ function ViewModel(lists) {
             }
         });
         return list;
-    };    //vm
+    };
     self.showList = ko.computed(function () {
-        return self.selectedList() != null;
-    });//vm
-
+        return self.selectedList != null;
+    });
     self.totalDone = ko.computed(function () {
         var numDone = 0;
         if (self.selectedList() == null) {
@@ -109,7 +89,7 @@ function ViewModel(lists) {
             for (var i = 0; i < y.length; i++) {
                 var currentList = y;
                 var currentItem = currentList[i];
-                if (currentItem.isDone() === true) {
+                if (currentItem.isDone === true) {
                     numDone++;
                 }
             }
@@ -117,7 +97,7 @@ function ViewModel(lists) {
         }
     });
 
-    //CRUD LIST
+    //New ToDoList
     self.addToDoList = function () {
         DontshowLast = true;
         var listToBeAdded = self.newToDoList();
@@ -127,38 +107,12 @@ function ViewModel(lists) {
         }
         self.toDoLists.push(listToBeAdded);
         self.resetList();
-    }   //vm
-    self.removeToDoList = function (toDoList) {
-        DontshowLast = true;
-
-        $.ajax({
-            method: "POST",
-            url: "/todolists/Delete/" + toDoList.toDoListID(),
-            contentType: "application/json",
-            dataType: "json",
-            //headers: {
-            //    'RequestVerificationToken': '@TokenHeaderValue()'
-            //}
-        })
-          .done(function (data, textStatus, jqXHR) {
-              //alert("success");
-              self.reload();
-
-              //self.toDoLists.remove(toDoList);
-
-          })
-          .fail(function (jqXHR, textStatus, errorThrown) {
-              alert("error");
-          })
-          .always(function (data, textStatus) {
-              //  alert("complete");
-          });
-    }   //todolist
+    };
     self.resetList = function () {
         //self.errorMessage('');
         self.newToDoList(new ToDoList());
 
-    };     //vm
+    };
     self.saveList = function () {
         DontshowLast = true;
         var data = ko.toJSON({
@@ -181,62 +135,33 @@ function ViewModel(lists) {
           .fail(function (jqXHR, textStatus, errorThrown) {
               alert("error");
           })
-    };      //vm
+    };
 
-    //CRUD ITEM
-    self.removeItem = function (listItem) {
-        isDeleteList = false;
-
+    //Delete ToDoList
+    self.removeToDoList = function (toDoList) {
+        DontshowLast = true;
         $.ajax({
             method: "POST",
-            url: "/todolists/DeleteItems/" + listItem.listItemID(),
+            url: "/todolists/Delete/" + toDoList.toDoListID(),
             contentType: "application/json",
             dataType: "json",
-        })
-        .done(function (data, textStatus, jqXHR) {
-            var currentlistID = listItem.toDoListID();
-
-            var onReloadCallback = function () {
-                console.debug('onReloadCallback')
-                self.selectList(currentlistID);
-            }
-            self.reload(onReloadCallback);
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            alert("error");
-        })
-    } //item
-    self.saveItem = function () {
-        DontshowLast = false;
-        var currentlistID = self.selectedList().toDoListID();
-        var data = ko.toJSON({
-            ItemName: self.newItemOnSelected().itemName,
-            ToDoListID: currentlistID,
-            IsDone: self.newItemOnSelected().isDone,
-        });
-        $.ajax({
-            method: "POST",
-            url: "/listItems/Create",
-            data: data,
-            contentType: "application/json",
-            dataType: "json",
-
+            //headers: {
+            //    'RequestVerificationToken': '@TokenHeaderValue()'
+            //}
         })
           .done(function (data, textStatus, jqXHR) {
-              console.debug("success", data);
-              
-              self.newItemOnSelected(new Item());
-              var onReloadCallback = function () {
-                  console.debug('onReloadCallback')
-                  self.selectList(currentlistID);
-              }
-              self.reload(onReloadCallback);
+              //alert("success");
+                     self.reload();                              
+              //self.toDoLists.remove(toDoList);
           })
           .fail(function (jqXHR, textStatus, errorThrown) {
               alert("error");
           })
+          .always(function (data, textStatus) {
+              //  alert("complete");
+          });
+    }
 
-    };          //todolist
     //load data into site (from controller)
     self.reload = function (callback) {
         console.debug('reload')
@@ -268,9 +193,7 @@ function ViewModel(lists) {
                 self.users(data);
             });
     }
-
     self.reload();
 }
-
 var vm = new ViewModel();
 ko.applyBindings(vm);

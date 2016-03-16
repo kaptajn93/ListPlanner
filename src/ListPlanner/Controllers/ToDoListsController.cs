@@ -40,9 +40,10 @@ namespace ListPlanner.Controllers
         public JsonResult toDoJson()
         {
             var todolist = _context.ToDoList.Include(x => x.Items);
-            //  var json = Newtonsoft.Json.JsonConvert.SerializeObject(todolist, Newtonsoft.Json.Formatting.Indented);
+            
             return Json(todolist);
         }
+
 
         public JsonResult toDoByUser(int userId)
         {
@@ -81,16 +82,10 @@ namespace ListPlanner.Controllers
         {
             if (ModelState.IsValid)
             {
-                //var user = toDoList.UserID;
-                //toDoList.User = user;
                 _context.ToDoList.Add(toDoList);
                 _context.SaveChanges();
-                //return RedirectToAction("Index");
                 return Json(new AjaxResponse { IsSuccess = true });
             }
-
-            //ViewData["UserID"] = new SelectList(_context.User, "UserID", "User", toDoList.UserID);
-            //return View(toDoList);
 
             var errorList = ModelState.ToDictionary(
                 kvp => kvp.Key,

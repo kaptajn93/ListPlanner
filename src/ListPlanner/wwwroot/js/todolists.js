@@ -10,21 +10,6 @@ function ToDoList(selected, name, items, userID, toDoListID) {
     self.toDoListID = ko.observable(toDoListID || null)
     self.newItem = ko.observable(new Item());
 
-    //Add and reset item
-    self.addItem = function (item) {
-        var itemToBeAdded = item ? item : self.newItem();
-        if (itemToBeAdded.itemName().length <= '1') {
-            alert('Name is required to be > 1');
-            return false;
-        }
-        self.items.push(itemToBeAdded);
-        self.resetItem();
-    }
-    self.resetItem = function () {
-        //self.errorMessage('');
-        self.newItem(new Item());
-    }
-    //Update items on list
     self.getCount = ko.computed(function () {
         var items = self.items();
         var count = 0;
@@ -39,6 +24,68 @@ function ToDoList(selected, name, items, userID, toDoListID) {
         };
     });
 
+    // New Item on list
+    self.saveItem = function () {
+        DontshowLast = false;
+        var currentlistID = self.toDoListID;
+        var data = ko.toJSON({
+            ItemName: self.newItem().itemName,
+            ToDoListID: currentlistID,
+            IsDone: self.newItem().isDone,
+        });
+        $.ajax({
+            method: "POST",
+            url: "/listItems/Create",
+            data: data,
+            contentType: "application/json",
+            dataType: "json",
+        })
+          .done(function (data, textStatus, jqXHR) {
+              console.debug("success", data);
+              self.newItem(new Item());
+              var onReloadCallback = function () {
+                  console.debug('onReloadCallback')
+                  // self.selectList(currentlistID);
+              }
+              self.reloadListItems(onReloadCallback);
+
+          })
+          .fail(function (jqXHR, textStatus, errorThrown) {
+              alert("error");
+          })
+
+    };
+    self.addItemToSelectedList = function () {
+        DontshowLast = false;
+        var itemToBeAdded = self.newItem();
+        if (itemToBeAdded.itemName().length <= '1') {
+            alert('Name is required to be > 1');
+            return false;
+        }
+        self.resetSelectedItem = function () {
+            //self.errorMessage('');
+            self.newItem(new Item());
+        }
+        self.resetSelectedItem();
+    }
+
+    //Remove item:                              url skal kunne ændres til listitems
+    self.removeItem = function (listItem) {
+        isDeleteList = false;
+        $.ajax({
+            method: "POST",
+            url: "/todolists/DeleteItems/" + listItem.listItemID(),
+            contentType: "application/json",
+            dataType: "json",
+        })
+        .done(function (data, textStatus, jqXHR) {
+            self.reloadListItems();                  
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            alert("error");
+        })
+    }
+   
     // computed
     self.allDone = ko.computed(function () {
 
@@ -74,6 +121,25 @@ function ToDoList(selected, name, items, userID, toDoListID) {
     self.itemCount = ko.computed(function () {
         return self.items().length;
     });
-  
-   
+
+    self.reloadListItems = function () {
+        
+        $.getJSON("/todolists/todoJson")
+                .done(function (todoLists) {
+
+                    self.items([]);
+                    var currentListID = self.toDoListID;
+                    var currentList = ko.utils.arrayFirst(todoLists, function (list) {
+                        return (currentListID() === list.toDoListID);
+                    });
+                    var mappedData = ko.utils.arrayMap(currentList.items, function (item) {
+                        return new Item(item.itemName, item.isDone, item.toDoListID, item.listItemID);
+                    });
+                    self.items(mappedData);
+            });
+            //var x = currentList.getCount();
+            //return todoList;
+       // });
+    }
+    //self.reloadListItems();
 }

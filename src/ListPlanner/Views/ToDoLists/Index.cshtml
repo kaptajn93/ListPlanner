@@ -15,22 +15,12 @@
         </tr>
     </thead>
     <tbody data-bind="foreach: toDoLists">
-
-        @*<tr data-toggle="modal" data-target="#currentList" id="setSuccess" data-bind="showModal: $parent.selectedList.bind($data), css: cssStatusClass">
-            <td colspan="2"><h4><text data-bind="text: name" /></h4></td>
-            <td><h4><text data-bind="text: itemCount" /></h4></td>
-            <td><h4><text data-bind="text: allDoneText()" /></h4></td>
-            <td><button class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeToDoList">&times;</button></td>
-        </tr>*@
-
-
         <tr id="setSuccess" data-bind= "css: cssStatusClass">
             <td data-bind="showModal: $parent.selectedList.bind($data)" colspan="2"><h4><text data-bind="text: name" /></h4></td>
             <td data-bind="showModal: $parent.selectedList.bind($data)"><h4><text data-bind="text: itemCount" /></h4></td>
             <td data-bind="showModal: $parent.selectedList.bind($data)"><h4><text data-bind="text: allDoneText()" /></h4></td>
-            <td><button class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeToDoList">&times;</button></td>
+            <td><button class="close" style="zoom:2.0; color:red" data-bind="click: $parent.removeToDoList">&times;</button></td>
         </tr>
-       
     </tbody>
 </table>
 <br />
@@ -43,21 +33,21 @@
 @*<button type="button" class="btn btn-primary btn-md" data-bind="click:reload">
     Reload
 </button>*@
-@*-------------------------------------modal-------------------------------------------------------*@
+@*-------------------------------------modal currentList-------------------------------------------------------*@
 <br />
 <hr />
 
 <div class="modal fade" id="currentList" tabindex="-1" role="dialog" data-bind="visible:selectedList()">
     <!-- ko if: selectedList() -->
-    <div class="modal-dialog">
+    <div class="modal-dialog" data-bind="with:selectedList" >
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" data-bind="closeModal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h2 class="modal-title"><text data-bind="text: selectedList().name" /></h2>
+                <h2 class="modal-title"><text data-bind="text: name" /></h2>
             </div>
             <div class="modal-body">
                 <h2 style="text-align:left;float:left;">List belong to user nr: </h2>
-                <h2 style="text-align:right;float:right;" data-bind="text:  selectedList().user().name || selectedList().user"></h2>
+                <h2 style="text-align:right;float:right;" data-bind="text:user"></h2>
                 <hr style="clear:both;" />
                 <table class="table table-hover">
                     <thead>
@@ -67,26 +57,26 @@
                             <th>ID</th>
                         </tr>
                     </thead>
-                    <tbody data-bind="foreach: selectedList().items()">
+                    <tbody data-bind="foreach: items">
                         <tr>
                             <td><h3><text data-bind="text: itemName" /></h3></td>
                             <td><input type="checkbox" style="zoom:2.0" data-bind="checked: isDone," /></td>
                             <td><h3><text data-bind="text: listItemID" /></h3></td>
                             <td>
-                                <button type="button" class="close" style="zoom:2.0; color:red" data-bind="click: $root.removeItem">&times;</button>
+                                <button type="button" class="close" style="zoom:2.0; color:red" data-bind="click: $parent.removeItem">&times;</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <br /><br />
-            <center><h4>You have done (<span data-bind="text: totalDone"></span> / <span data-bind="text: selectedList().items().length"></span>)</h4></center>
-            <div class="modal-footer">
+            <center><h4>You have done (<span data-bind="text: getCount().count"></span> / <span data-bind="text: items().length"></span>)</h4></center>
+            <div class="modal-footer" data-bind="with: newItem">
                 <table>
                     <tr>
-                        <td><input class="form-control" type="text" data-bind="value: newItemOnSelected().itemName" placeholder="insert item name" /></td>
+                        <td><input class="form-control" type="text" data-bind="value: itemName" placeholder="insert item name" /></td>
                         <td><h1>&nbsp;</h1></td>
-                        <td><button type="button" class="btn btn-primary" data-bind="click: saveItem">Add an item</button></td>
+                        <td><button type="button" class="btn btn-primary" data-bind="click: $parent.saveItem">Add an item</button></td>
                     </tr>
                 </table>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -97,7 +87,7 @@
     <!-- /ko -->
 
 </div>
-@*-------------------------------------modal-------------------------------------------------------*@
+@*-------------------------------------modal New List-------------------------------------------------------*@
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" data-bind="with: newToDoList">
         <div class="modal-dialog">
@@ -124,13 +114,12 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
 @section footer {
     <hr />
 <pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
 }
-@*______________________________________________Script section_____________________________________________*@
 
+@*______________________________________________Script section_____________________________________________*@
 @section scripts {
     <script src="~/js/listitems.js"></script>
     <script src="~/js/todolists.js"></script>
