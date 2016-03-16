@@ -100,23 +100,57 @@ namespace ListPlanner.Controllers
 
         }
 
+        [HttpPost]
+        public JsonResult Update([FromBody]ListItem listItem)
+        {
+            if (ModelState.IsValid)
+            {
+
+                _context.ListItem.Update(listItem);
+                _context.SaveChanges();
+                return Json(new AjaxResponse { IsSuccess = true });
+            }
+
+
+
+            var errorList = ModelState.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+            );
+
+            var error = new
+            {
+                ErrorCount = ModelState.ErrorCount,
+                Errors = errorList,
+                Message = "Ret fejlen"
+            };
+
+            return Json(new AjaxResponse
+            {
+                IsSuccess = false,
+                Errors = errorList.Select(x => string.Join(",", x.Value)).ToList(),
+                Message = "An error occured!"
+            });
+
+        }
+
 
         // GET: ListItems/Edit/5
-        public IActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
+        //public IActionResult Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            ListItem listItem = _context.ListItem.Single(m => m.ListItemID == id);
-            if (listItem == null)
-            {
-                return HttpNotFound();
-            }
-            ViewData["ToDoListID"] = new SelectList(_context.Set<ToDoList>(), "ToDoListID", "ToDoList", listItem.ToDoListID);
-            return View(listItem);
-        }
+        //    ListItem listItem = _context.ListItem.Single(m => m.ListItemID == id);
+        //    if (listItem == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    ViewData["ToDoListID"] = new SelectList(_context.Set<ToDoList>(), "ToDoListID", "ToDoList", listItem.ToDoListID);
+        //    return View(listItem);
+        //}
 
         // POST: ListItems/Edit/5
         [HttpPost]

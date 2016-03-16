@@ -9,7 +9,6 @@
 //     self.ToDoListID = function(todolist){
 //         return todolist.ToDoListID;
 //};
-
     self.thisItem = ko.computed(function () {
         return self.itemName() + "," + self.isDone() + "," + self.toDoListID() + "," + self.listItemID();
     })
