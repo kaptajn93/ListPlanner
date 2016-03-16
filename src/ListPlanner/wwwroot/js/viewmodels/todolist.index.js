@@ -54,10 +54,11 @@ function ViewModel(lists) {
     //observables:
     var self = this;
     self.toDoLists = ko.observableArray(lists || []);
-    self.isDone = ko.observable();
     self.users = ko.observableArray([]);
+
     self.selectedUser = ko.observable(null);
-    self.selectedList = ko.observable(null).logIt('selectedList');
+
+    self.selectedList = ko.observable(null)/*.logIt('selectedList')*/;
     self.newItemOnSelected = ko.observable(new Item());
     self.newToDoList = ko.observable(new ToDoList());
 
@@ -68,9 +69,8 @@ function ViewModel(lists) {
         if (typeof (listToSelect) !== 'object') {
             listToSelect = self.getListById(list);
         }
-
         self.selectedList(listToSelect);
-    }
+    }       //vm
     self.addItemToSelectedList = function () {
         DontshowLast = false;
         var itemToBeAdded = self.newItemOnSelected();
@@ -79,13 +79,13 @@ function ViewModel(lists) {
             alert('Name is required to be > 1');
             return false;
         }
-        // self.selectedList().items.push(itemToBeAdded);
+        
         self.resetSelectedItem = function () {
             //self.errorMessage('');
             self.newItemOnSelected(new Item());
         }
         self.resetSelectedItem();
-    }
+    } //todolist
     self.getListById = function (listID) {
         var list = ko.utils.arrayFirst(self.toDoLists(), function (list, index) {
             if (list.toDoListID() === listID) {
@@ -93,10 +93,11 @@ function ViewModel(lists) {
             }
         });
         return list;
-    };
+    };    //vm
     self.showList = ko.computed(function () {
         return self.selectedList() != null;
-    });
+    });//vm
+
     self.totalDone = ko.computed(function () {
         var numDone = 0;
         if (self.selectedList() == null) {
@@ -119,22 +120,14 @@ function ViewModel(lists) {
     //CRUD LIST
     self.addToDoList = function () {
         DontshowLast = true;
-        //self.NextToDoListID = function () {
-        //    var nextTdlID = calldb.getNextToDoListID();
-        //    Item.getNextToDoListID(nextTdlID);
-        //    return nextTdlID;
-        //}
-
         var listToBeAdded = self.newToDoList();
-
         if (listToBeAdded.name().length <= '1') {
             alert('Name is required to be > 1');
             return false;
         }
-
         self.toDoLists.push(listToBeAdded);
         self.resetList();
-    }
+    }   //vm
     self.removeToDoList = function (toDoList) {
         DontshowLast = true;
 
@@ -160,12 +153,12 @@ function ViewModel(lists) {
           .always(function (data, textStatus) {
               //  alert("complete");
           });
-    }
+    }   //todolist
     self.resetList = function () {
         //self.errorMessage('');
         self.newToDoList(new ToDoList());
 
-    };
+    };     //vm
     self.saveList = function () {
         DontshowLast = true;
         var data = ko.toJSON({
@@ -188,7 +181,7 @@ function ViewModel(lists) {
           .fail(function (jqXHR, textStatus, errorThrown) {
               alert("error");
           })
-    };
+    };      //vm
 
     //CRUD ITEM
     self.removeItem = function (listItem) {
@@ -212,17 +205,15 @@ function ViewModel(lists) {
         .fail(function (jqXHR, textStatus, errorThrown) {
             alert("error");
         })
-    }
+    } //item
     self.saveItem = function () {
         DontshowLast = false;
         var currentlistID = self.selectedList().toDoListID();
-
         var data = ko.toJSON({
             ItemName: self.newItemOnSelected().itemName,
             ToDoListID: currentlistID,
             IsDone: self.newItemOnSelected().isDone,
         });
-
         $.ajax({
             method: "POST",
             url: "/listItems/Create",
@@ -233,10 +224,8 @@ function ViewModel(lists) {
         })
           .done(function (data, textStatus, jqXHR) {
               console.debug("success", data);
-
-              var newItem = self.newItemOnSelected();
-              self.selectedList().addItem(newItem);
-
+              
+              self.newItemOnSelected(new Item());
               var onReloadCallback = function () {
                   console.debug('onReloadCallback')
                   self.selectList(currentlistID);
@@ -247,41 +236,7 @@ function ViewModel(lists) {
               alert("error");
           })
 
-    };
-
-
-    
-    self.updateItem = function (listItem) {
-        DontshowLast = false;
-        var currentlistID = listItem.toDoListID;
-        var data = ko.toJSON({
-            ItemName: listItem.itemName(),
-            ToDoListID: currentlistID,
-            IsDone: listItem.isDone(),
-            ListItemID: listItem.listItemID(),
-        });
-
-        $.ajax({
-            method: "POST",
-            url: "/ListItems/Update/",
-            data: data,
-            contentType: "application/json",
-            dataType: "json",
-        })
-      .done(function (data, textStatus, jqXHR) {
-
-          var onReloadCallback = function () {
-              console.debug('onReloadCallback')
-              self.selectList(currentlistID);
-          }
-          self.reload(onReloadCallback);
-      })
-      .fail(function (jqXHR, textStatus, errorThrown) {
-          alert("error");
-      })
-
-    }
-
+    };          //todolist
     //load data into site (from controller)
     self.reload = function (callback) {
         console.debug('reload')
@@ -313,22 +268,6 @@ function ViewModel(lists) {
                 self.users(data);
             });
     }
-
-    self.update = ko.computed(function () {
-        var x = self.selectedList();
-        if (x !== null) {
-            var y = x.items();
-            if (y !== null) {
-                for (var i = 0; i < y.length; i++) {
-                    var currentItem = y[i];
-                    if (currentItem.isDone()) {
-                        self.updateItem(currentItem);
-                    }
-                }
-            }
-        }
-    });
-
 
     self.reload();
 }
