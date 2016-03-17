@@ -9,7 +9,6 @@ function ToDoList(selected, name, items, userID, toDoListID) {
     self.user = ko.observable(userID || null);
     self.toDoListID = ko.observable(toDoListID || null)
     self.newItem = ko.observable(new Item());
-
     self.getCount = ko.computed(function () {
         var items = self.items();
         var count = 0;
@@ -105,8 +104,6 @@ function ToDoList(selected, name, items, userID, toDoListID) {
     });
     self.cssStatusClass = ko.computed(function () {
 
-        //$parent.selectedList() !== null && $parent.selectedList().name === name
-
         if (!self.allDone()) {
             return 'warning';
         }
@@ -115,7 +112,6 @@ function ToDoList(selected, name, items, userID, toDoListID) {
         }
         else {
             return 'success';
-
         }
     });
     self.itemCount = ko.computed(function () {
@@ -126,7 +122,6 @@ function ToDoList(selected, name, items, userID, toDoListID) {
         
         $.getJSON("/todolists/todoJson")
                 .done(function (todoLists) {
-
                     self.items([]);
                     var currentListID = self.toDoListID;
                     var currentList = ko.utils.arrayFirst(todoLists, function (list) {
@@ -137,9 +132,5 @@ function ToDoList(selected, name, items, userID, toDoListID) {
                     });
                     self.items(mappedData);
             });
-            //var x = currentList.getCount();
-            //return todoList;
-       // });
     }
-    //self.reloadListItems();
 }

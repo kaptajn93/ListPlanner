@@ -17,8 +17,6 @@ namespace ListPlanner.Controllers
         }
 
         // GET: ListItems
-
-
         public IActionResult Index()
         {
             // var applicationDbContext = _context.ListItem.Include(l => l.ToDoList);
@@ -49,21 +47,7 @@ namespace ListPlanner.Controllers
             ViewData["ToDoListID"] = new SelectList(_context.Set<ToDoList>(), "ToDoListID", "ToDoList");
             return View();
         }
-        //// POST: ListItems/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Create(ListItem listItem)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.ListItem.Add(listItem);
-        //        _context.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-        //    ViewData["ToDoListID"] = new SelectList(_context.Set<ToDoList>(), "ToDoListID", "ToDoList", listItem.ToDoListID);
-        //    return View(listItem);
-        //}
-
+ 
         // POST: ListItems/Create
         [HttpPost]
         // [ValidateAntiForgeryToken]
@@ -133,26 +117,10 @@ namespace ListPlanner.Controllers
             });
 
         }
+        
+        //Dont use the fallowing:
 
-
-        // GET: ListItems/Edit/5
-        //public IActionResult Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-
-        //    ListItem listItem = _context.ListItem.Single(m => m.ListItemID == id);
-        //    if (listItem == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    ViewData["ToDoListID"] = new SelectList(_context.Set<ToDoList>(), "ToDoListID", "ToDoList", listItem.ToDoListID);
-        //    return View(listItem);
-        //}
-
-        // POST: ListItems/Edit/5
+        // POST: ListItems/Edit/5           We use update instead
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(ListItem listItem)
@@ -167,8 +135,8 @@ namespace ListPlanner.Controllers
             return View(listItem);
         }
 
-        // GET: ListItems/Delete/5
-        [ActionName("Delete")]
+        // GET: ListItems/DeleteItems/5         we use a simular in ToDoListsController
+        [ActionName("DeleteItems")]
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -186,9 +154,9 @@ namespace ListPlanner.Controllers
         }
 
         // POST: ListItems/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        [HttpPost, ActionName("DeleteItems")]
+      //  [ValidateAntiForgeryToken]
+        public IActionResult DeleteItemsConfirmed(int id)
         {
             ListItem listItem = _context.ListItem.Single(m => m.ListItemID == id);
             _context.ListItem.Remove(listItem);

@@ -44,10 +44,6 @@ ko.subscribable.fn.logIt = function (name) {
     return this;
 };
 
-//function closeCurrentItems() {
-//    document.getElementById("currentList").style.display = "none";
-//}
-
 function ViewModel(lists) {
 
     //observables:
@@ -145,20 +141,14 @@ function ViewModel(lists) {
             url: "/todolists/Delete/" + toDoList.toDoListID(),
             contentType: "application/json",
             dataType: "json",
-            //headers: {
-            //    'RequestVerificationToken': '@TokenHeaderValue()'
-            //}
         })
           .done(function (data, textStatus, jqXHR) {
-              //alert("success");
                      self.reload();                              
-              //self.toDoLists.remove(toDoList);
           })
           .fail(function (jqXHR, textStatus, errorThrown) {
               alert("error");
           })
           .always(function (data, textStatus) {
-              //  alert("complete");
           });
     }
 

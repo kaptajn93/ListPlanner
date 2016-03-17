@@ -28,9 +28,7 @@
       .done(function (data, textStatus, jqXHR) {
           var onReloadCallback = function () {
               console.debug('onReloadCallback')
-       //       self.selectList(currentlistID);
           }
-       //   self.reload(onReloadCallback);
       })
       .fail(function (jqXHR, textStatus, errorThrown) {
           alert("error");

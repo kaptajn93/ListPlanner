@@ -202,9 +202,6 @@ namespace ListPlanner.Controllers
         //______________________________________________
 
     }
-
-
-
     //her
     [Route("api/[controller]")]
     public class ValuesController : Controller
@@ -273,8 +270,6 @@ namespace ListPlanner.Controllers
         [HttpGet("{id}")]
         public IActionResult GetProduct(int id)
         {
-
-
             var toDoList = toDoLists.FirstOrDefault((p) => p.ToDoListID == id);
             if (toDoList == null)
             {
