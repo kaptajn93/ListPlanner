@@ -4,9 +4,11 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using ListPlanner.Models;
 using System.Collections.Generic;
+using ListPlanner.Filters;
 
 namespace ListPlanner.Controllers
 {
+    
     public class UsersController : Controller
     {
         private ApplicationDbContext _context;
@@ -50,6 +52,9 @@ namespace ListPlanner.Controllers
         {
             return View();
         }
+
+
+
 
         // POST: Users/Create
         [HttpPost]

@@ -18,4 +18,12 @@ namespace ListPlanner.Models
       
         public virtual ICollection<ToDoList> Lists { get; set; }
     }
+
+
+    public class CacheEntry
+    {
+        public string Key { get; set; }
+
+        public DateTime Timestamp { get; set; }
+    }
 }

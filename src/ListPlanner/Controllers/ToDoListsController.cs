@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -6,6 +7,11 @@ using ListPlanner.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net;
+using System.Threading;
+using ListPlanner.Filters;
+using Microsoft.AspNet.Mvc.Filters;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Primitives;
 
 namespace ListPlanner.Controllers
 {
@@ -24,30 +30,54 @@ namespace ListPlanner.Controllers
     {
         private ApplicationDbContext _context;
 
-        public ToDoListsController(ApplicationDbContext context)
+        const string ToDoListCacheKeyPrefix = "ToDoListCache_";
+        const string ToDoByUserCacheKeyPrefix = "ToDoByUserCache_";
+
+        private IMemoryCache cache;
+        public ToDoListsController(ApplicationDbContext context, IMemoryCache cache)
         {
             _context = context;
+            this.cache = cache;
         }
 
         // GET: ToDoLists
         public IActionResult Index()
         {
+            
             var applicationDbContext = _context.ToDoList.Include(t => t.User);
             return View(applicationDbContext.ToList());
         }
 
+
+
         //JUBII
+        [LogActionFilter]
+        [HsmCache(CacheKey = ToDoListCacheKeyPrefix, Duration = 60)]
         public JsonResult toDoJson()
         {
-            var todolist = _context.ToDoList.Include(x => x.Items);
-            
+            IList<ToDoList> todolist = _context.ToDoList.Include(x => x.Items).ToList();
             return Json(todolist);
         }
 
 
+        //[HsmCache(CacheKey = ToDoByUserCacheKeyPrefix, Duration = 60)]
         public JsonResult toDoByUser(int userId)
         {
-            var todolist = _context.ToDoList.Where(t => t.UserID == userId);
+            IList<ToDoList> todolist;
+
+            var cacheKey = GetCacheKey(ToDoByUserCacheKeyPrefix, userId);
+            cache.TryGetValue(cacheKey, out todolist);
+
+            if (todolist == null)
+            {
+                todolist = _context.ToDoList.Where(t => t.UserID == userId).ToList();
+
+                cache.Set(cacheKey, todolist, new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5)
+                });
+            }
+
             return Json(todolist);
         }
 
@@ -201,52 +231,18 @@ namespace ListPlanner.Controllers
 
         //______________________________________________
 
+
+
+        private string GetCacheKey(string prefix, object key)
+        {
+            return prefix + key;
+        }
     }
+
+    
+
+
     //her
-    [Route("api/[controller]")]
-    public class ValuesController : Controller
-    {
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
-
-
-
-
-        //public IList<ToDoList> Index2()
-        //    {
-        //        var applicationDbContext = _context.ToDoList.Include(t => t.User);
-        //        var lists = applicationDbContext.ToList();
-        //        return lists;
-    }
 
     //og her
     [Route("api/[controller]")]
@@ -278,5 +274,10 @@ namespace ListPlanner.Controllers
             return new ObjectResult(toDoList);
         }
     }
+
+
+
+
+
 }
 
