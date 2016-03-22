@@ -4,18 +4,22 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using ListPlanner.Models;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ListPlanner.Filters;
+using Microsoft.Extensions.Logging;
 
 namespace ListPlanner.Controllers
 {
     
     public class UsersController : Controller
     {
+
         private ApplicationDbContext _context;
 
         public UsersController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
+
         }
 
         // GET: Users
